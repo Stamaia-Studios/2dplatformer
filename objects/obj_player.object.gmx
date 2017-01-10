@@ -198,7 +198,7 @@ else
 if (vsp &lt; 10) vsp += grav; // Increase downward movement speed based on gravity
 
 // Allow jumping if on floor
-if (place_meeting(x, y+1, obj_wall))
+if (onground)
 {
     vsp = jump_pressed * -jumpspeed;
 }
