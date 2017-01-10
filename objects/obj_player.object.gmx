@@ -37,8 +37,9 @@ movespeedincrement = 0.2; // Move speed increment
 crouchspeed = 2; // Movement Speed while crounching
 dash_left_timer = 0;
 dash_right_timer = 0;
-dash_timeout = 10;
+dash_timeout = 15;
 dashtrigger = false;
+dashdistance = 20;
 </string>
           </argument>
         </arguments>
@@ -128,14 +129,21 @@ else if (keyboard_check_pressed(vk_left))
     if(dash_right_timer &gt; 0)
         dash_right_timer = 0;
 }
-if ((keyboard_check_released(vk_left) || keyboard_check_released(vk_right)) &amp;&amp; dashtrigger)
+
+// Add dash constant to horizontal speed for this step, reset bool and timers
+if(dashtrigger)
 {
+    hsp += (dashdistance * move);
     dashtrigger = false;
     dash_left_timer = 0;
     dash_right_timer = 0;
 }
+// Decrement timers
+if(dash_left_timer &gt; 0) dash_left_timer--;
+if(dash_right_timer &gt; 0) dash_right_timer--;
 
-if (place_meeting(x, y+1, obj_wall)) // Allow jumping if on floor
+// Allow jumping if on floor
+if (place_meeting(x, y+1, obj_wall))
 {
     vsp = key_jump * -jumpspeed;
 }
@@ -151,14 +159,12 @@ if (place_meeting(x+hsp, y, obj_wall)) // Check if will hit wall upon moving
 }
 
 // Perform horizontal movement
-if(!dashtrigger)
-    x += hsp;
-else
-    x += hsp*2;
-if(dash_left_timer &gt; 0) dash_left_timer--;
-if(dash_right_timer &gt; 0) dash_right_timer--;
+x += hsp;
+if (abs(hsp) &gt; movespeedmax) // If movement speed is above max, set it to max
+    hsp = movespeedmax * sign(hsp);
 
-if (keyboard_check_released(vk_space) &amp;&amp; !sign(vsp)) // Slow vertical movement when jump button is released
+// Slow vertical movement when jump button is released
+if (keyboard_check_released(vk_space) &amp;&amp; !sign(vsp))
 {
     vsp /= 2;
 }
