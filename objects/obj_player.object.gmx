@@ -31,15 +31,14 @@ grav = 0.2; // Gravity
 hsp = 0; // Horizontal Speed
 vsp = 0; // Vertical Speed
 jumpspeed = 7; // Jump Speed Constant
-movespeed = 4; // Movement Speed Constant
-movespeedmax = 12; // Max move speed
-movespeedincrement = 0.2; // Move speed increment
-crouchspeed = 2; // Movement Speed while crounching
+basemovespeed = 6; // Movement Speed Constant
+crouchmult = 0.5; // Crouch movement multiplier
+runmult = 1.5 // Run movement multiplier
+movestatusmult = 1; // For buffs/debuffs
 dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
 dashtrigger = false;
-dashdistance = 20;
 </string>
           </argument>
         </arguments>
@@ -67,11 +66,15 @@ dashdistance = 20;
 // Get Inputs
 key_right = keyboard_check(vk_right);
 key_left = keyboard_check(vk_left);
-key_jump = keyboard_check(vk_space);
+key_jump = keyboard_check_pressed(ord('Z'));
 key_down = keyboard_check(vk_down);
+key_run = keyboard_check(vk_shift);
 
 // Calculate movement
 move = -key_left + key_right; // Will be -1 for left and +1 for right
+crouchspeed = (basemovespeed * crouchmult) * movestatusmult; // Get current crouch speed
+runspeed = (basemovespeed * runmult) * movestatusmult; // Get current run speed
+movespeed = basemovespeed * movestatusmult; // Get current walk speed
 
 if((key_down &amp;&amp; place_meeting(x, y+1, obj_wall)) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-17, obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
 {
@@ -86,6 +89,18 @@ if((key_down &amp;&amp; place_meeting(x, y+1, obj_wall)) || (sprite_index == spr
         hsp = move * crouchspeed; // Crouch walk in a direction
     }
 }
+else if (key_run &amp;&amp; move != 0)
+{
+    sprite_index = spr_player; // Set to normal sprite
+    if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
+    {
+        hsp += move * (runspeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+    }
+    else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under base movement speed, do this
+    {
+        hsp = move * runspeed; // Move in direction at run speed
+    }
+}
 else
 {
     sprite_index = spr_player; // Set to normal sprite
@@ -93,15 +108,16 @@ else
     {
         hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
     }
-    else if (abs(hsp) &lt; movespeed &amp;&amp; move != 0) // If under base movement speed, do this
+    else if (abs(hsp) &lt; movespeed &amp;&amp; move != 0) // If under movement speed, do this
     {
-        hsp = move * movespeed; // Move in direction at base move speed
+        hsp = move * movespeed; // Move in direction at move speed
     }
-    else if(abs(hsp) &lt; movespeedmax &amp;&amp; move != 0 &amp;&amp; place_meeting(x, y+1, obj_wall)) // If under max speed but above base and touching the ground, do this
+    else if (!key_run &amp;&amp; abs(hsp) &gt; movespeed)
     {
-        hsp += move * movespeedincrement; // Add movement speed based on increment.
+        hsp *= 0.8; // Exponential speed decay
+        if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below base speed, stop
     }
-    else if(move == 0) // If not pressing movement keys, do this
+    else if (move == 0) // If not pressing movement keys, do this
     {
         hsp *= 0.9; // Exponential speed decay
         if (abs(hsp) &lt; movespeed) hsp = 0; // If below base speed, stop
@@ -131,13 +147,13 @@ else if (keyboard_check_pressed(vk_left))
 }
 
 // Add dash constant to horizontal speed for this step, reset bool and timers
-if(dashtrigger)
+/*if(dashtrigger)
 {
     hsp += (dashdistance * move);
     dashtrigger = false;
     dash_left_timer = 0;
     dash_right_timer = 0;
-}
+}*/
 // Decrement timers
 if(dash_left_timer &gt; 0) dash_left_timer--;
 if(dash_right_timer &gt; 0) dash_right_timer--;
@@ -160,11 +176,9 @@ if (place_meeting(x+hsp, y, obj_wall)) // Check if will hit wall upon moving
 
 // Perform horizontal movement
 x += hsp;
-if (abs(hsp) &gt; movespeedmax) // If movement speed is above max, set it to max
-    hsp = movespeedmax * sign(hsp);
 
 // Slow vertical movement when jump button is released
-if (keyboard_check_released(vk_space) &amp;&amp; !sign(vsp))
+if (keyboard_check_released(ord('Z')) &amp;&amp; !sign(vsp))
 {
     vsp /= 2;
 }
