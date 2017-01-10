@@ -204,11 +204,23 @@ if (place_meeting(x, y+1, obj_wall))
 // Horizonatal collision aka don't go through the walls
 if (place_meeting(x+hsp, y, obj_wall)) // Check if will hit wall upon moving
 {
-    while (!place_meeting(x+sign(hsp), y, obj_wall)) // Move 1 in current direction until further movement would collide with the wall
-    {
-        x += sign(hsp);
+    //Check if collision still happens with different slopes
+    yCheck = 0;//current slope being checked
+    yCheckMax = -5;//max slope allowable
+    slopeCheck = true;//whether there is still ground in the way
+    while(slopeCheck &amp;&amp; yCheck &gt;= yCheckMax){//check through slopes
+        yCheck -= 1;
+        slopeCheck = place_meeting(x+hsp, y+yCheck, obj_wall);
     }
-    hsp = 0; // Prevent further horizontal movement on this step
+    if(!slopeCheck){//if a climable slope, move up to meet the ground
+        y += yCheck;
+    }else{
+        while (!place_meeting(x+sign(hsp), y, obj_wall)) // Move 1 in current direction until further movement would collide with the wall
+        {
+            x += sign(hsp);
+        }
+        hsp = 0; // Prevent further horizontal movement on this step
+    }
 }
 
 // Perform horizontal movement
