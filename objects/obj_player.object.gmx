@@ -35,6 +35,10 @@ movespeed = 4; // Movement Speed Constant
 movespeedmax = 12; // Max move speed
 movespeedincrement = 0.2; // Move speed increment
 crouchspeed = 2; // Movement Speed while crounching
+dash_left_timer = 0;
+dash_right_timer = 0;
+dash_timeout = 10;
+dashtrigger = false;
 </string>
           </argument>
         </arguments>
@@ -61,13 +65,12 @@ crouchspeed = 2; // Movement Speed while crounching
 
 // Get Inputs
 key_right = keyboard_check(vk_right);
-key_left = -keyboard_check(vk_left);
+key_left = keyboard_check(vk_left);
 key_jump = keyboard_check(vk_space);
 key_down = keyboard_check(vk_down);
 
 // Calculate movement
-
-move = key_left + key_right; // Will be -1 for left and +1 for right
+move = -key_left + key_right; // Will be -1 for left and +1 for right
 
 if((key_down &amp;&amp; place_meeting(x, y+1, obj_wall)) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-17, obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
 {
@@ -106,6 +109,32 @@ else
 
 if (vsp &lt; 10) vsp += grav; // Increase downward movement speed based on gravity
 
+// Check for dash triggers (double press right or left)
+if (keyboard_check_pressed(vk_right))
+{
+    if(dash_right_timer &gt; 0) 
+        dashtrigger = true;
+    else
+        dash_right_timer = dash_timeout;
+    if(dash_left_timer &gt; 0)
+        dash_left_timer = 0;
+}
+else if (keyboard_check_pressed(vk_left))
+{
+    if(dash_left_timer &gt; 0) 
+        dashtrigger = true;
+    else
+        dash_left_timer = dash_timeout;
+    if(dash_right_timer &gt; 0)
+        dash_right_timer = 0;
+}
+if ((keyboard_check_released(vk_left) || keyboard_check_released(vk_right)) &amp;&amp; dashtrigger)
+{
+    dashtrigger = false;
+    dash_left_timer = 0;
+    dash_right_timer = 0;
+}
+
 if (place_meeting(x, y+1, obj_wall)) // Allow jumping if on floor
 {
     vsp = key_jump * -jumpspeed;
@@ -121,7 +150,13 @@ if (place_meeting(x+hsp, y, obj_wall)) // Check if will hit wall upon moving
     hsp = 0; // Prevent further horizontal movement on this step
 }
 
-x += hsp; // Perform horizontal movement
+// Perform horizontal movement
+if(!dashtrigger)
+    x += hsp;
+else
+    x += hsp*2;
+if(dash_left_timer &gt; 0) dash_left_timer--;
+if(dash_right_timer &gt; 0) dash_right_timer--;
 
 if (keyboard_check_released(vk_space) &amp;&amp; !sign(vsp)) // Slow vertical movement when jump button is released
 {
@@ -138,7 +173,7 @@ if (place_meeting(x, y+vsp, obj_wall)) // Check if will hit floor/ceiling upon m
     vsp = 0; // Prevent further vertical movement on this step
 }
 
-y += vsp; // Perform horizontal movement
+y += vsp; // Perform vertical movement
 </string>
           </argument>
         </arguments>
