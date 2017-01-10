@@ -9,12 +9,16 @@
     <sprite>sprites\spr_player_crouching</sprite>
     <sprite>sprites\spr_player</sprite>
     <sprite>sprites\spr_wall</sprite>
+    <sprite>sprites\spr_slope_steep</sprite>
+    <sprite>sprites\srp_slope_shallow</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
   <objects name="objects">
     <object>objects\obj_player</object>
     <object>objects\obj_wall</object>
+    <object>objects\obj_slope_steep</object>
+    <object>objects\spr_slope_shallow</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
