@@ -31,15 +31,42 @@ grav = 0.2; // Gravity
 hsp = 0; // Horizontal Speed
 vsp = 0; // Vertical Speed
 jumpspeed = 7; // Jump Speed Constant
-movespeed = 4; // Movement Speed Constant
-movespeedmax = 12; // Max move speed
-movespeedincrement = 0.2; // Move speed increment
-crouchspeed = 2; // Movement Speed while crounching
+basemovespeed = 6; // Movement Speed Constant
+crouchmult = 0.5; // Crouch movement multiplier
+runmult = 1.5 // Run movement multiplier
+movestatusmult = 1; // For buffs/debuffs
 dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
 dashtrigger = false;
-dashdistance = 20;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Controls
+
+key_right = vk_right;
+key_left = vk_left;
+key_jump = ord('Z');
+key_down = vk_down;
+key_run = vk_shift;
+taptorun = false;
 </string>
           </argument>
         </arguments>
@@ -65,15 +92,60 @@ dashdistance = 20;
             <string>///Movement and Collision
 
 // Get Inputs
-key_right = keyboard_check(vk_right);
-key_left = keyboard_check(vk_left);
-key_jump = keyboard_check(vk_space);
-key_down = keyboard_check(vk_down);
+right_pressed = keyboard_check(key_right);
+left_pressed = keyboard_check(key_left);
+jump_pressed = keyboard_check_pressed(key_jump);
+down_pressed = keyboard_check(key_down);
+run_pressed = keyboard_check(key_run);
 
 // Calculate movement
-move = -key_left + key_right; // Will be -1 for left and +1 for right
+move = -left_pressed + right_pressed; // Will be -1 for left and +1 for right
+crouchspeed = (basemovespeed * crouchmult) * movestatusmult; // Get current crouch speed
+runspeed = (basemovespeed * runmult) * movestatusmult; // Get current run speed
+movespeed = basemovespeed * movestatusmult; // Get current walk speed
 
-if((key_down &amp;&amp; place_meeting(x, y+1, obj_wall)) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-17, obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
+// Decrement timers
+if(dash_left_timer &gt; 0) dash_left_timer--;
+if(dash_right_timer &gt; 0) dash_right_timer--;
+
+// Check if dashing has stopped and if so, set dashtrigger to false
+if (move == 0 &amp;&amp; dashtrigger)
+    dashtrigger = false;
+
+// Check for dash triggers (double press right or left)
+if (keyboard_check_pressed(vk_right))
+{
+    if(dash_right_timer &gt; 0) 
+    {
+        dashtrigger = true;
+        dash_right_timer = 0;
+    }
+    else
+        dash_right_timer = dash_timeout;
+    if(dash_left_timer &gt; 0)
+        dash_left_timer = 0;
+}
+else if (keyboard_check_pressed(vk_left))
+{
+    if(dash_left_timer &gt; 0) 
+    {
+        dashtrigger = true;
+        dash_left_timer = 0;
+    }
+    else
+        dash_left_timer = dash_timeout;
+    if(dash_right_timer &gt; 0)
+        dash_right_timer = 0;
+}
+
+// Set running to false, and only set it to true if dashing has happened with tap-to-run or the run key is held without tap-to-run
+running = false;
+if (dashtrigger &amp;&amp; taptorun)
+    running = true;
+else if (run_pressed &amp;&amp; !taptorun)
+    running = true;
+
+if((down_pressed &amp;&amp; place_meeting(x, y+1, obj_wall)) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-17, obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
 {
     sprite_index = spr_player_crouching; // Set to crouching/sliding sprite
     if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
@@ -86,6 +158,18 @@ if((key_down &amp;&amp; place_meeting(x, y+1, obj_wall)) || (sprite_index == spr
         hsp = move * crouchspeed; // Crouch walk in a direction
     }
 }
+else if (running &amp;&amp; move != 0) // Check if running
+{
+    sprite_index = spr_player; // Set to normal sprite
+    if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
+    {
+        hsp += move * (runspeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+    }
+    else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under base movement speed, do this
+    {
+        hsp = move * runspeed; // Move in direction at run speed
+    }
+}
 else
 {
     sprite_index = spr_player; // Set to normal sprite
@@ -93,15 +177,16 @@ else
     {
         hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
     }
-    else if (abs(hsp) &lt; movespeed &amp;&amp; move != 0) // If under base movement speed, do this
+    else if (abs(hsp) &lt; movespeed &amp;&amp; move != 0) // If under movement speed, do this
     {
-        hsp = move * movespeed; // Move in direction at base move speed
+        hsp = move * movespeed; // Move in direction at move speed
     }
-    else if(abs(hsp) &lt; movespeedmax &amp;&amp; move != 0 &amp;&amp; place_meeting(x, y+1, obj_wall)) // If under max speed but above base and touching the ground, do this
+    else if (!run_pressed &amp;&amp; abs(hsp) &gt; movespeed)
     {
-        hsp += move * movespeedincrement; // Add movement speed based on increment.
+        hsp *= 0.8; // Exponential speed decay
+        if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below base speed, stop
     }
-    else if(move == 0) // If not pressing movement keys, do this
+    else if (move == 0) // If not pressing movement keys, do this
     {
         hsp *= 0.9; // Exponential speed decay
         if (abs(hsp) &lt; movespeed) hsp = 0; // If below base speed, stop
@@ -110,42 +195,10 @@ else
 
 if (vsp &lt; 10) vsp += grav; // Increase downward movement speed based on gravity
 
-// Check for dash triggers (double press right or left)
-if (keyboard_check_pressed(vk_right))
-{
-    if(dash_right_timer &gt; 0) 
-        dashtrigger = true;
-    else
-        dash_right_timer = dash_timeout;
-    if(dash_left_timer &gt; 0)
-        dash_left_timer = 0;
-}
-else if (keyboard_check_pressed(vk_left))
-{
-    if(dash_left_timer &gt; 0) 
-        dashtrigger = true;
-    else
-        dash_left_timer = dash_timeout;
-    if(dash_right_timer &gt; 0)
-        dash_right_timer = 0;
-}
-
-// Add dash constant to horizontal speed for this step, reset bool and timers
-if(dashtrigger)
-{
-    hsp += (dashdistance * move);
-    dashtrigger = false;
-    dash_left_timer = 0;
-    dash_right_timer = 0;
-}
-// Decrement timers
-if(dash_left_timer &gt; 0) dash_left_timer--;
-if(dash_right_timer &gt; 0) dash_right_timer--;
-
 // Allow jumping if on floor
 if (place_meeting(x, y+1, obj_wall))
 {
-    vsp = key_jump * -jumpspeed;
+    vsp = jump_pressed * -jumpspeed;
 }
 
 // Horizonatal collision aka don't go through the walls
@@ -160,11 +213,9 @@ if (place_meeting(x+hsp, y, obj_wall)) // Check if will hit wall upon moving
 
 // Perform horizontal movement
 x += hsp;
-if (abs(hsp) &gt; movespeedmax) // If movement speed is above max, set it to max
-    hsp = movespeedmax * sign(hsp);
 
 // Slow vertical movement when jump button is released
-if (keyboard_check_released(vk_space) &amp;&amp; !sign(vsp))
+if (keyboard_check_released(key_jump) &amp;&amp; !sign(vsp))
 {
     vsp /= 2;
 }
