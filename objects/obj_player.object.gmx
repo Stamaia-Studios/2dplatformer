@@ -48,6 +48,16 @@ dashAttackTimer = dashAttackCool;
 down_pressed = 0;
 jump_pressed = 0;
 fallthrough = false;
+attacktrigger = false;
+
+
+has_gloves = false; // pick up flags - boxing gloves
+glovesmult = 1.5;
+has_shorts = false; // boxing shorts
+shortsmult = 1.5; // used for running and jumping
+has_boomerang = false; // boomerang
+has_item = false; // throwable item
+item_id = 0; // place holder id for pots/et;al
 </string>
           </argument>
         </arguments>
@@ -77,6 +87,7 @@ key_attack = ord('X');
 key_down = vk_down;
 key_run = vk_shift;
 taptorun = false;
+key_action = ord('C'); // pick_up and throw
 </string>
           </argument>
         </arguments>
@@ -108,6 +119,7 @@ jump_pressed = keyboard_check_pressed(key_jump);
 attack_pressed = keyboard_check_pressed(key_attack);
 down_pressed = keyboard_check(key_down);
 run_pressed = keyboard_check(key_run);
+action_pressed = keyboard_check(key_action); // pickup or throw
 
 onground = place_meeting(x, y+1, obj_wall); // True if player is on the ground
 
@@ -121,6 +133,13 @@ gliding = !onground &amp;&amp; sign(vsp) &amp;&amp; keyboard_check(key_jump); //
 
 if ((keyboard_check_released(key_down) || onground) &amp;&amp; fallthrough) // If in fallthrough and down key has been released or have touched ground, exit fallthrough
     fallthrough = false;
+
+// throw condition - set flag high if conditions are met (idle, moving, running, jumping only)
+throw_ok = has_item &amp;&amp; (!onground || running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attacktrigger;
+
+// pick up condition - set flag high if conditions met (idle, moving, running only)
+pick_up_ok = onground &amp;&amp; (running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attacktrigger &amp;&amp; !has_item;
+
 
 // Decrement timers
 if(dash_left_timer &gt; 0) dash_left_timer--;
@@ -279,6 +298,44 @@ if (place_meeting(x, y+vsp, obj_wall)) // Check if will hit floor/ceiling upon m
 }
 
 y += vsp; // Perform vertical movement
+
+
+// If pick up conditions are met then pick up object that character is on top of
+if (pick_up_ok &amp;&amp; action_pressed)
+{
+    // power ups can be picked up even if carrying a throwable
+    // for now health is considered to be an automatic pickup
+    if (place_meeting(x+hsp, y, obj_gloves)) 
+    {
+        // need to remove item from play
+        has_gloves = true; // attacks are more powerful
+    }
+    else if (place_meeting(x+hsp, y, obj_shorts)) 
+    {
+        // need to remove item from play
+        has_shorts = true; // jumps higher, runs faster
+    }
+    
+    else if (place_meeting(x+hsp, y, obj_boomerang)) 
+    {
+        // need to remove item from play
+        has_boomerang = true; // throwable object that can be reused if caught
+    }
+    else if (!has_item &amp;&amp; place_meeting(x+hsp, y, obj_throwable)) 
+    {
+        has_item = true; // throwable item like a pot, can damage enemies
+        item_id = 1;
+    }    
+}
+
+
+// If throwable conditions are met then throw the object
+if (throw_ok &amp;&amp; action_pressed) 
+{
+    // TODO: throw the object 
+    has_item = false;    
+    item_id = 0;
+}
 </string>
           </argument>
         </arguments>
