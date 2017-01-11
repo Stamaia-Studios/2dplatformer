@@ -42,9 +42,9 @@ dash_right_timer = 0;
 dash_timeout = 15;
 dashtrigger = false;
 dashAttack = false;
-dashAttackSpeed = 15;
-dashAttackCool = 100;
-dashAttackTimer = 0;
+dashAttackSpeed = 12;
+dashAttackCool = 20
+dashAttackTimer = dashAttackCool;
 </string>
           </argument>
         </arguments>
@@ -157,7 +157,7 @@ if (dashtrigger &amp;&amp; taptorun &amp;&amp; onground)
 else if (run_pressed &amp;&amp; !taptorun &amp;&amp; onground)
     running = true;
 
-if((down_pressed &amp;&amp; onground) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-17, obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
+if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCool) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-17, obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
 {
     sprite_index = spr_player_crouching; // Set to crouching/sliding sprite
     if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
@@ -212,27 +212,27 @@ else
 
 if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed based on gravity
 
-// Allow jumping if on floor
-if (onground)
+// Allow jumping if on floor and not dash attacking
+if (onground &amp;&amp; dashAttackTimer == dashAttackCool)
 {
     vsp = jump_pressed * -jumpspeed;
 }
 
-//Set hsp to dash attack speed if in attack
-if(dashAttack){
+if(dashAttack){//Set hsp to dash attack speed if in attack, but before decceleration
     hsp = dashDir*dashAttackSpeed;
 }
-if(dashAttackTimer &lt; dashAttackCool){
-    dashAttackTimer++;
-}
 
+if(dashAttackTimer &lt; dashAttackCool &amp;&amp; !dashAttack){//Decelerate from attack
+    dashAttackTimer++;
+    hsp = dashDir*dashAttackSpeed*(dashAttackCool-dashAttackTimer)/dashAttackCool
+}
 
 // Horizonatal collision aka don't go through the walls
 if (place_meeting(x+hsp, y, obj_wall)) // Check if will hit wall upon moving
 {
     //Check if collision still happens with different slopes
     yCheck = 0;//current slope being checked
-    yCheckMax = -7;//max slope allowable
+    yCheckMax = -10;//max slope allowable
     slopeCheck = true;//whether there is still ground in the way
     while(slopeCheck &amp;&amp; yCheck &gt;= yCheckMax){//check through slopes
         yCheck -= 1;
