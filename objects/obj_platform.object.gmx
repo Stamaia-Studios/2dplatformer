@@ -50,7 +50,7 @@
             <kind>1</kind>
             <string>if (instance_exists(obj_player))
 {
-    if (round(obj_player.y + (obj_player.sprite_height/2)) &gt; y) || (obj_player.down_pressed) mask_index = -1;
+    if (round(obj_player.y + (obj_player.sprite_height/2)) &gt; y) || (obj_player.down_pressed &amp;&amp; obj_player.jump_pressed) mask_index = -1;
     else mask_index = spr_platform;
 }
 </string>

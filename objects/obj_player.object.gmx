@@ -46,6 +46,7 @@ dashAttackSpeed = 12;
 dashAttackCool = 20
 dashAttackTimer = dashAttackCool;
 down_pressed = 0;
+jump_pressed = 0;
 </string>
           </argument>
         </arguments>
