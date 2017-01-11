@@ -41,6 +41,10 @@ dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
 dashtrigger = false;
+dashAttack = false;
+dashAttackSpeed = 15;
+dashAttackCool = 100;
+dashAttackTimer = 0;
 </string>
           </argument>
         </arguments>
@@ -66,6 +70,7 @@ dashtrigger = false;
 key_right = vk_right;
 key_left = vk_left;
 key_jump = ord('Z');
+key_attack = ord('X');
 key_down = vk_down;
 key_run = vk_shift;
 taptorun = false;
@@ -97,6 +102,7 @@ taptorun = false;
 right_pressed = keyboard_check(key_right);
 left_pressed = keyboard_check(key_left);
 jump_pressed = keyboard_check_pressed(key_jump);
+attack_pressed = keyboard_check_pressed(key_attack);
 down_pressed = keyboard_check(key_down);
 run_pressed = keyboard_check(key_run);
 
@@ -170,6 +176,11 @@ else if (running &amp;&amp; move != 0) // Check if running
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
         hsp += move * (runspeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+    }else if (attack_pressed &amp;&amp; !dashAttack &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
+        instance_create(x+ 48*move, y, obj_hb_dash);//create the dash attack hitbox object
+        dashAttackTimer = 0;//dash attack cool down reset
+        dashAttack = true;//is attacking
+        dashDir = move;//attack direction
     }
     else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under base movement speed, do this
     {
@@ -207,12 +218,21 @@ if (onground)
     vsp = jump_pressed * -jumpspeed;
 }
 
+//Set hsp to dash attack speed if in attack
+if(dashAttack){
+    hsp = dashDir*dashAttackSpeed;
+}
+if(dashAttackTimer &lt; dashAttackCool){
+    dashAttackTimer++;
+}
+
+
 // Horizonatal collision aka don't go through the walls
 if (place_meeting(x+hsp, y, obj_wall)) // Check if will hit wall upon moving
 {
     //Check if collision still happens with different slopes
     yCheck = 0;//current slope being checked
-    yCheckMax = -5;//max slope allowable
+    yCheckMax = -7;//max slope allowable
     slopeCheck = true;//whether there is still ground in the way
     while(slopeCheck &amp;&amp; yCheck &gt;= yCheckMax){//check through slopes
         yCheck -= 1;
