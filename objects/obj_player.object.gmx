@@ -244,7 +244,7 @@ if (place_meeting(x+hsp, y, obj_wall)) // Check if will hit wall upon moving
         yCheck -= 1;
         slopeCheck = place_meeting(x+hsp, y+yCheck, obj_wall);
     }
-    if(!slopeCheck){//if a climable slope, move up to meet the ground
+    if(!slopeCheck &amp;&amp; place_meeting(x,y-yCheck, obj_wall)){//if a climable slope, move up to meet the ground
         y += yCheck;
     }else{
         while (!place_meeting(x+sign(hsp), y, obj_wall)) // Move 1 in current direction until further movement would collide with the wall
