@@ -20,6 +20,7 @@
     <sprite>sprites\spr_throwable</sprite>
     <sprite>sprites\spr_gloves</sprite>
     <sprite>sprites\spr_shorts</sprite>
+    <sprite>sprites\spr_platform_move</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
@@ -36,6 +37,7 @@
     <object>objects\obj_throwable</object>
     <object>objects\obj_gloves</object>
     <object>objects\obj_shorts</object>
+    <object>objects\obj_platform_move</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
