@@ -25,7 +25,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>sprite_index = -1;
+            <string>sprite_index = -1; // Turn off the sprite for this object
 </string>
           </argument>
         </arguments>
@@ -48,10 +48,11 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (instance_exists(obj_player))
+            <string>if (instance_exists(obj_player)) // If player object exists
 {
-    if (round(obj_player.y + (obj_player.sprite_height/2)) &gt; y) mask_index = -1;
-    else mask_index = spr_platform_oneway;
+    if (round(obj_player.y + (obj_player.sprite_height/2)) &gt; y) // If player is below object, turn off collisions
+        mask_index = -1; 
+    else mask_index = spr_platform_oneway; // If above, set collisions accordingly
 }
 </string>
           </argument>
@@ -75,7 +76,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_sprite(spr_platform_oneway,0,x,y);
+            <string>draw_sprite(spr_platform_oneway,0,x,y); // Draw the sprite for this object
 </string>
           </argument>
         </arguments>

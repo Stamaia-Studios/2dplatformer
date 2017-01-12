@@ -47,6 +47,7 @@ dashAttackCool = 20
 dashAttackTimer = dashAttackCool;
 down_pressed = 0;
 jump_pressed = 0;
+fallthrough = false;
 </string>
           </argument>
         </arguments>
@@ -117,6 +118,9 @@ runspeed = (basemovespeed * runmult) * movestatusmult; // Get current run speed
 movespeed = basemovespeed * movestatusmult; // Get current walk speed
 
 gliding = !onground &amp;&amp; sign(vsp) &amp;&amp; keyboard_check(key_jump); // Check if can glide
+
+if ((keyboard_check_released(key_down) || onground) &amp;&amp; fallthrough) // If in fallthrough and down key has been released or have touched ground, exit fallthrough
+    fallthrough = false;
 
 // Decrement timers
 if(dash_left_timer &gt; 0) dash_left_timer--;
@@ -214,8 +218,8 @@ else
 
 if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed based on gravity
 
-// Allow jumping if on floor and not dash attacking
-if (onground &amp;&amp; dashAttackTimer == dashAttackCool)
+// Allow jumping if on floor, but don't allow it if on a platform, crouching, and not moving or while dash attacking
+if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool)
 {
     vsp = jump_pressed * -jumpspeed;
 }
