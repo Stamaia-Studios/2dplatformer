@@ -43,21 +43,21 @@ dash_timeout = 15;
 dashtrigger = false;
 dashAttack = false;
 dashAttackSpeed = 12;
-dashAttackCool = 20
+dashAttackCool = 20;
 dashAttackTimer = dashAttackCool;
 down_pressed = 0;
 jump_pressed = 0;
 fallthrough = false;
-attacktrigger = false;
+attackTrigger = false;
 
 
 has_gloves = false; // pick up flags - boxing gloves
-glovesmult = 1.5;
+glovesmult = 1.5; // damage multiplier
 has_shorts = false; // boxing shorts
-shortsmult = 1.5; // used for running and jumping
+shortsmult = 1; // used for running and jumping
 has_boomerang = false; // boomerang
-has_item = false; // throwable item
-item_id = 0; // place holder id for pots/et;al
+has_throwable = false; // throwable item
+throwable_id = 0; // place holder item id for pots/et;al
 </string>
           </argument>
         </arguments>
@@ -135,10 +135,10 @@ if ((keyboard_check_released(key_down) || onground) &amp;&amp; fallthrough) // I
     fallthrough = false;
 
 // throw condition - set flag high if conditions are met (idle, moving, running, jumping only)
-throw_ok = has_item &amp;&amp; (!onground || running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attacktrigger;
+throw_ok = has_throwable &amp;&amp; (!onground || running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attackTrigger;
 
 // pick up condition - set flag high if conditions met (idle, moving, running only)
-pick_up_ok = onground &amp;&amp; (running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attacktrigger &amp;&amp; !has_item;
+pick_up_ok = onground &amp;&amp; (running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attackTrigger;
 
 
 // Decrement timers
@@ -245,11 +245,13 @@ if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 
 
 if(dashAttack){//Set hsp to dash attack speed if in attack, but before decceleration
     hsp = dashDir*dashAttackSpeed;
+    attackTrigger = true;
 }
 
 if(dashAttackTimer &lt; dashAttackCool &amp;&amp; !dashAttack){//Decelerate from attack
     dashAttackTimer++;
-    hsp = dashDir*dashAttackSpeed*(dashAttackCool-dashAttackTimer)/dashAttackCool
+    hsp = dashDir*dashAttackSpeed*(dashAttackCool-dashAttackTimer)/dashAttackCool;
+    attackTrigger = false;
 }
 
 // Horizonatal collision aka don't go through the walls
@@ -303,28 +305,60 @@ y += vsp; // Perform vertical movement
 // If pick up conditions are met then pick up object that character is on top of
 if (pick_up_ok &amp;&amp; action_pressed)
 {
+
     // power ups can be picked up even if carrying a throwable
     // for now health is considered to be an automatic pickup
-    if (place_meeting(x+hsp, y, obj_gloves)) 
+    if (place_meeting(x, y, obj_gloves) &amp;&amp; !has_gloves) 
     {
-        // need to remove item from play
-        has_gloves = true; // attacks are more powerful
+        
+        // stop any movement
+        vsp = 0;    
+        hsp = 0;        
+       
+        has_gloves = true; // attacks are now more powerful
+        
+        // tell object to disappear
+        obj_gloves.is_taken = true;
     }
-    else if (place_meeting(x+hsp, y, obj_shorts)) 
+    else if (place_meeting(x, y, obj_shorts) &amp;&amp; !has_shorts) 
     {
-        // need to remove item from play
+    
+        // stop any movement
+        vsp = 0;    
+        hsp = 0;
+        
+        // present but will have no effect on play
         has_shorts = true; // jumps higher, runs faster
+        
+        // tell object to disappear
+        obj_shorts.is_taken = true; 
     }
     
-    else if (place_meeting(x+hsp, y, obj_boomerang)) 
+    else if (place_meeting(x, y, obj_boomerang) &amp;&amp; !has_boomerang) 
     {
-        // need to remove item from play
-        has_boomerang = true; // throwable object that can be reused if caught
+        // stop any movement
+        vsp = 0;    
+        hsp = 0;
+                
+        has_boomerang = true; // throwable object that can be reused if caught        
+               
+        // tell object to disappear
+        obj_boomerang.is_taken = true;        
     }
-    else if (!has_item &amp;&amp; place_meeting(x+hsp, y, obj_throwable)) 
+    else if (place_meeting(x, y, obj_throwable) &amp;&amp; !has_throwable) 
     {
-        has_item = true; // throwable item like a pot, can damage enemies
-        item_id = 1;
+    
+        // stop any movement
+        vsp = 0;    
+        hsp = 0;
+       
+        has_throwable = true; // throwable item like a pot, can damage enemies
+
+        // get the items id so we can spawn it when throwing it
+        throwable_id = obj_throwable.item_id;
+        
+        // tell object to disappear
+        obj_throwable.is_taken = true;          
     }    
 }
 
