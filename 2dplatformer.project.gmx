@@ -23,6 +23,7 @@
     <sprite>sprites\spr_gloves</sprite>
     <sprite>sprites\spr_shorts</sprite>
     <sprite>sprites\spr_rock</sprite>
+    <sprite>sprites\spr_platform_move</sprite>
     <sprite>sprites\spr_pWall</sprite>
   </sprites>
   <backgrounds name="background"/>
@@ -42,6 +43,7 @@
     <object>objects\obj_gloves</object>
     <object>objects\obj_shorts</object>
     <object>objects\obj_rock</object>
+    <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
   </objects>
   <rooms name="rooms">
