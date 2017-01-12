@@ -15,6 +15,11 @@
     <sprite>sprites\spr_platform_oneway</sprite>
     <sprite>sprites\spr_slope_steep</sprite>
     <sprite>sprites\srp_slope_shallow</sprite>
+    <sprite>sprites\spr_health</sprite>
+    <sprite>sprites\spr_boomerang</sprite>
+    <sprite>sprites\spr_throwable</sprite>
+    <sprite>sprites\spr_gloves</sprite>
+    <sprite>sprites\spr_shorts</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
@@ -26,6 +31,11 @@
     <object>objects\obj_hb_dash</object>
     <object>objects\obj_platform</object>
     <object>objects\obj_platform_oneway</object>
+    <object>objects\obj_boomerang</object>
+    <object>objects\obj_health</object>
+    <object>objects\obj_throwable</object>
+    <object>objects\obj_gloves</object>
+    <object>objects\obj_shorts</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
