@@ -119,7 +119,7 @@ jump_pressed = keyboard_check_pressed(key_jump);
 attack_pressed = keyboard_check_pressed(key_attack);
 down_pressed = keyboard_check(key_down);
 run_pressed = keyboard_check(key_run);
-action_pressed = keyboard_check(key_action); // pickup or throw
+action_pressed = keyboard_check_pressed(key_action); // pickup or throw
 
 onground = place_meeting(x, y+1, obj_wall); // True if player is on the ground
 
