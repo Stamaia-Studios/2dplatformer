@@ -50,7 +50,7 @@
             <kind>1</kind>
             <string>if (instance_exists(obj_player)) // If player object exists
 {
-    if (round(obj_player.y + (obj_player.sprite_height/2)) &gt; y) // If player is below object, turn off collisions
+    if (round(obj_player.bbox_bottom) &gt; y) // If player is below object, turn off collisions
         mask_index = -1; 
     else mask_index = spr_platform_oneway; // If above, set collisions accordingly
 }
