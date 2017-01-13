@@ -127,6 +127,7 @@
     <instance objName="obj_boomerang" x="608" y="480" name="inst_32B72D0F" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_gloves" x="576" y="480" name="inst_BBA8BC58" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_throwable" x="544" y="480" name="inst_0ED66D7D" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
+    <instance objName="obj_platform_move" x="256" y="448" name="inst_E4F11711" locked="0" code="targetpoints[1, 0] = 200;&#xA;targetpoints[1, 1] = 0;&#xA;targetpoints[2, 0] = 200;&#xA;targetpoints[2, 1] = -100;&#xA;targetpoints[3, 0] = 200;&#xA;targetpoints[3, 1] = 0;&#xA;" scaleX="4" scaleY="1" colour="4294967295" rotation="0"/>
   </instances>
   <tiles/>
   <PhysicsWorld>0</PhysicsWorld>
