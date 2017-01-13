@@ -51,6 +51,8 @@ fallthrough = false;
 attackTrigger = false;
 
 
+chrH = 16; // half height of player in pixels
+chrW = 16; // half width of player in pixels
 has_gloves = false; // pick up flags - boxing gloves
 glovesmult = 1.5; // damage multiplier
 has_shorts = false; // boxing shorts
@@ -310,7 +312,10 @@ if (pick_up_ok &amp;&amp; action_pressed)
     // for now health is considered to be an automatic pickup
     if (place_meeting(x, y, obj_gloves) &amp;&amp; !has_gloves) 
     {
-        
+       
+        // get the object ID - rect bounding box
+        object_id = collision_rectangle(x-chrW, y-chrH, x+chrW, y+chrH, obj_gloves, false, true);
+     
         // stop any movement
         vsp = 0;    
         hsp = 0;        
@@ -318,10 +323,13 @@ if (pick_up_ok &amp;&amp; action_pressed)
         has_gloves = true; // attacks are now more powerful
         
         // tell object to disappear
-        obj_gloves.is_taken = true;
+        object_id.is_taken = true;
     }
     else if (place_meeting(x, y, obj_shorts) &amp;&amp; !has_shorts) 
     {
+    
+        // get the object ID - rect bounding box
+        object_id = collision_rectangle(x-chrW, y-chrH, x+chrW, y+chrH, obj_shorts, false, true);
     
         // stop any movement
         vsp = 0;    
@@ -331,11 +339,15 @@ if (pick_up_ok &amp;&amp; action_pressed)
         has_shorts = true; // jumps higher, runs faster
         
         // tell object to disappear
-        obj_shorts.is_taken = true; 
+        object_id.is_taken = true;
     }
     
     else if (place_meeting(x, y, obj_boomerang) &amp;&amp; !has_boomerang) 
     {
+    
+        // get the object ID - rect bounding box
+        object_id = collision_rectangle(x-chrW, y-chrH, x+chrW, y+chrH, obj_boomerang, false, true);
+        
         // stop any movement
         vsp = 0;    
         hsp = 0;
@@ -343,10 +355,13 @@ if (pick_up_ok &amp;&amp; action_pressed)
         has_boomerang = true; // throwable object that can be reused if caught        
                
         // tell object to disappear
-        obj_boomerang.is_taken = true;        
+        object_id.is_taken = true;     
     }
     else if (place_meeting(x, y, obj_throwable) &amp;&amp; !has_throwable) 
     {
+    
+        // get the object ID - rect bounding box
+        object_id = collision_rectangle(x-chrW, y-chrH, x+chrW, y+chrH, obj_throwable, false, true);
     
         // stop any movement
         vsp = 0;    
@@ -355,10 +370,10 @@ if (pick_up_ok &amp;&amp; action_pressed)
         has_throwable = true; // throwable item like a pot, can damage enemies
 
         // get the items id so we can spawn it when throwing it
-        throwable_id = obj_throwable.item_id;
+        throwable_id = object_id.item_id;
         
         // tell object to disappear
-        obj_throwable.is_taken = true;          
+        object_id.is_taken = true;      
     }    
 }
 
