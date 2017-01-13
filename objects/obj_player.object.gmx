@@ -28,11 +28,11 @@
             <string>/// Init Variables
 
 grav = 0.2; // Gravity
-maxfallspeed = 10; // Max speed at which you can fall
+maxfallspeed = 8; // Max speed at which you can fall
 hsp = 0; // Horizontal Speed
 vsp = 0; // Vertical Speed
-jumpspeed = 7; // Jump Speed Constant
-basemovespeed = 6; // Movement Speed Constant
+jumpspeed = 6; // Jump Speed Constant
+basemovespeed = 2; // Movement Speed Constant
 crouchmult = 0.5; // Crouch movement multiplier
 runmult = 1.5 // Run movement multiplier
 movestatusmult = 1; // For buffs/debuffs
@@ -42,7 +42,7 @@ dash_right_timer = 0;
 dash_timeout = 15;
 dashtrigger = false;
 dashAttack = false;
-dashAttackSpeed = 12;
+dashAttackSpeed = 6;
 dashAttackCool = 20;
 dashAttackTimer = dashAttackCool;
 down_pressed = 0;
@@ -184,7 +184,7 @@ if (dashtrigger &amp;&amp; taptorun &amp;&amp; onground)
 else if (run_pressed &amp;&amp; !taptorun &amp;&amp; onground)
     running = true;
 
-if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCool) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-17, obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
+if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCool) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-(sprite_height+1), obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
 {
     sprite_index = spr_player_crouching; // Set to crouching/sliding sprite
     if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
@@ -202,9 +202,9 @@ else if (running &amp;&amp; move != 0) // Check if running
     sprite_index = spr_player; // Set to normal sprite
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
-        hsp += move * (runspeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+        hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
     }else if (attack_pressed &amp;&amp; !dashAttack &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
-        instance_create(x+ 48*move, y, obj_hb_dash);//create the dash attack hitbox object
+        instance_create(x+((sprite_width*1.5)*move), y, obj_hb_dash);//create the dash attack hitbox object
         dashAttackTimer = 0;//dash attack cool down reset
         dashAttack = true;//is attacking
         dashDir = move;//attack direction
@@ -225,9 +225,9 @@ else
     {
         hsp = move * movespeed; // Move in direction at move speed
     }
-    else if (!run_pressed &amp;&amp; abs(hsp) &gt; movespeed &amp;&amp; onground)
+    else if (!running &amp;&amp; abs(hsp) &gt; movespeed &amp;&amp; onground)
     {
-        hsp *= 0.8; // Exponential speed decay
+        hsp *= 0.95; // Exponential speed decay
         if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below base speed, stop
     }
     else if (move == 0 &amp;&amp; onground) // If not pressing movement keys, do this
