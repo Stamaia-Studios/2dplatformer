@@ -56,7 +56,9 @@ prevy = y;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// Check if platform has reached the target - then make up the difference and place the
+            <string>//--Move platform along path--//
+
+// Check if platform has reached the target - then make up the difference and place the
 // platform directly on the point
 if point_distance(x, y, originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1]) &lt; movespeed {
     // Set platform to be exactly on point by moving the remaining distance
@@ -74,16 +76,57 @@ if point_distance(x, y, originx + targetpoints[currenttarget, 0], originy + targ
     move_towards_point(originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1], movespeed);
 }
 
-// Check if player is sitting on platform
-if (place_meeting(x, y-1, obj_player)) {
-    // Add to player position the change in platform position for each step
+//--Move player if the two collide--//
+
+// Check if player is intersecting platform
+if (place_meeting(x, y-1, obj_player)) || (place_meeting(x, y+1, obj_player)) || (place_meeting(x-1, y, obj_player)) || (place_meeting(x+1, y, obj_player)){
+    // Add the change in position from last step to the player position
     if instance_exists(obj_player)
     {
-        obj_player.x += (x - prevx);
-        obj_player.y += (y - prevy);
+        // Get distance between each face of the player and it's relating platform_move face
+        distToPlayerTop = abs(obj_player.bbox_bottom - bbox_top);
+        distToPlayerBottom = abs(obj_player.bbox_top - bbox_bottom);
+        distToPlayerLeft = abs(obj_player.bbox_right - bbox_left);
+        distToPlayerRight = abs(obj_player.bbox_left - bbox_right);
+        
+        // Determine which distance is the smallest (This will give us the side of the platform the player is against)
+        smallestDist = min(distToPlayerTop, distToPlayerBottom, distToPlayerLeft, distToPlayerRight);
+        
+        // Player on top of platform // Move player along with platform
+        if (distToPlayerTop = smallestDist)
+        {
+            obj_player.hsp_carry += (x - prevx);
+            obj_player.vsp_carry += (y - prevy);
+        }
+        // Player under platform // Push player out of platform
+        if (distToPlayerBottom = smallestDist)
+        {
+            //show_debug_message('BOTTOM');
+            if (!place_meeting(obj_player.x, obj_player.y + (y-prevy), obj_wall))
+            {
+                obj_player.vsp_carry += (y - prevy);
+            }
+        }
+        // Player to right of platform // Move player along with platform
+        if (distToPlayerRight = smallestDist)
+        {
+            //show_debug_message('RIGHT');
+            while (((obj_player.bbox_left + obj_player.hsp_carry) - bbox_right) &lt;= 1)
+            {
+                obj_player.hsp_carry += 1;
+            }
+        }
+        // Player to left of platform // Move player along with platform
+        if (distToPlayerLeft = smallestDist)
+        {
+            //show_debug_message('LEFT');
+            while (((obj_player.bbox_right + obj_player.hsp_carry) - bbox_left) &gt;= -1)
+            {
+                obj_player.hsp_carry -= 1;
+            }
+        }
     }
 }
-
 // Set the prev x,y to be used next step
 prevx = x;
 prevy = y;
