@@ -410,43 +410,36 @@ End Of Every Step Handlers
 //added some numbers for more leniency with auto killing
 //there is no top kill -- gravity is assumed to pull the character back down
 if((self.x&lt;-200)||(self.x&gt;room_width+200)||(self.y&gt;room_height+200)){
-hp-=1&lt;&lt;30;
+    //invincibility frame correcting
+    last_hp=0;
+    hp=0;//auto kills the player
 }
 
 //checks for death
 if(hp&lt;1){
-
-//sets speeds back to zero to prevent conflicts with spawn setup
-hsp=0;vsp=1;
-//sets the actual position back to start
-x=spawn[0];y=spawn[1];
-//1/3rd of a second at 60fps, of damage invulnerability
-inv=inv_frames;
-//resets health to prevent this death hadnler from running again
-hp=max_hp;
-
+    //sets speeds back to zero to prevent conflicts with spawn setup
+    hsp=0;vsp=1;
+    //sets the actual position back to start
+    x=spawn[0];y=spawn[1];
+    //1/3rd of a second at 60fps, of damage invulnerability
+    inv=inv_frames;
+    //resets health to prevent this death hadnler from running again
+    hp=max_hp;
+    //invincibility frame correcting
+    last_hp=hp;
 }
 
 if(hp!=last_hp){//damage frames handler
-
     if(inv==0){
     //even if this is called after death reset, it will be equivalent
     inv=inv_frames;
     //reset health for more damage checking
     last_hp=hp;
     }else hp = last_hp;
-
 }
-
 
 //Setting Damage Sprites, clickering every 6th frame FOR 3 FRAMES
 if(inv&gt;0&amp;&amp;inv%6&lt;3){
-    /*if(sprite_index == spr_player)
-    sprite_index = spr_player_damage_half_opacity;
-    else if(sprite_index == spr_player_dash)
-    sprite_index = spr_player_dash_damage_half_opacity;
-    else if(sprite_index == spr_player_crouching)
-    sprite_index = spr_player_crouching_damage_half_opacity;*/
     if(image_alpha&lt;1)
     image_alpha=1;
     else image_alpha=.2;
