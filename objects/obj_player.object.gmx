@@ -60,6 +60,14 @@ shortsmult = 1; // used for running and jumping
 has_boomerang = false; // boomerang
 has_throwable = false; // throwable item
 throwable_id = 0; // place holder item id for pots/et;al
+
+
+inv = 0;//invincibility 'steps' where the character cannot be damaged
+inv_frames = 60;//frame native limit, potential 'Mario Star' effect -- 1 second at 60FPS
+spawn[0] = x;spawn[1] = y;//default spawn information
+max_hp=10;//max allottment of health, e.g level up health
+hp = 10;// character health
+last_hp=hp;//health to determine damage
 </string>
           </argument>
         </arguments>
@@ -385,6 +393,60 @@ if (throw_ok &amp;&amp; action_pressed)
     has_item = false;    
     item_id = 0;
 }
+
+
+
+/*
+
+End Of Every Step Handlers
+• Out Of Bounds Checking
+    • Respawning
+• Death
+    • Reset Variables
+
+*/
+
+//Check if out of bounds, and cause damage to the player for death
+//added some numbers for more leniency with auto killing
+//there is no top kill -- gravity is assumed to pull the character back down
+if((self.x&lt;-200)||(self.x&gt;room_width+200)||(self.y&gt;room_height+200)){
+    //invincibility frame correcting
+    last_hp=0;
+    hp=0;//auto kills the player
+}
+
+//checks for death
+if(hp&lt;1){
+    //sets speeds back to zero to prevent conflicts with spawn setup
+    hsp=0;vsp=1;
+    //sets the actual position back to start
+    x=spawn[0];y=spawn[1];
+    //1/3rd of a second at 60fps, of damage invulnerability
+    inv=inv_frames;
+    //resets health to prevent this death hadnler from running again
+    hp=max_hp;
+    //invincibility frame correcting
+    last_hp=hp;
+}
+
+if(hp!=last_hp){//damage frames handler
+    if(inv==0){
+    //even if this is called after death reset, it will be equivalent
+    inv=inv_frames;
+    //reset health for more damage checking
+    last_hp=hp;
+    }else hp = last_hp;
+}
+
+//Setting Damage Sprites, clickering every 6th frame FOR 3 FRAMES
+if(inv&gt;0&amp;&amp;inv%6&lt;3){
+    if(image_alpha&lt;1)
+    image_alpha=1;
+    else image_alpha=.2;
+}
+//removes invincibility frames until none exist
+if(inv&gt;0)inv--;
+
 </string>
           </argument>
         </arguments>
