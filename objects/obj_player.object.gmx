@@ -225,8 +225,8 @@ else if (running &amp;&amp; move != 0) // Check if running
     }
 }
 else
-{
-    if(run_jump &amp;&amp; abs(hsp) &lt; basemovespeed*runmult){ //stay in runjump sprite until below running speed
+{       //stay in runjump sprite until below running speed or gliding
+    if((run_jump &amp;&amp; abs(hsp) &lt; basemovespeed*runmult) ||(run_jump &amp;&amp; gliding)){ 
         sprite_index = spr_player; // Set to normal sprite
         run_jump =false;
     }
