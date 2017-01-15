@@ -26,7 +26,7 @@
           <argument>
             <kind>1</kind>
             <string>///Set existence timer and init position
-alarm[0] = room_speed * .2;
+alarm[0] = room_speed * .1;
 lastX = obj_player.x;
 lastY = obj_player.y;
 
@@ -95,6 +95,7 @@ self.x += (obj_player.x - lastX);
 lastX = obj_player.x;
 self.y += (obj_player.y - lastY);
 lastY = obj_player.y;
+
 </string>
           </argument>
         </arguments>
