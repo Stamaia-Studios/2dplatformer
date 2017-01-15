@@ -43,10 +43,11 @@ dash_timeout = 15;
 dashtrigger = false;
 dashAttack = false;
 dashAttackSpeed = 6;
-dashAttackCool = 20;
+dashAttackCool = 25;
 dashAttackTimer = dashAttackCool;
 down_pressed = 0;
 jump_pressed = 0;
+run_jump = false;
 fallthrough = false;
 attackTrigger = false;
 
@@ -216,6 +217,7 @@ else if (running &amp;&amp; move != 0) // Check if running
         dashAttackTimer = 0;//dash attack cool down reset
         dashAttack = true;//is attacking
         dashDir = move;//attack direction
+        sprite_index = spr_player_dash;
     }
     else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under base movement speed, do this
     {
@@ -224,7 +226,10 @@ else if (running &amp;&amp; move != 0) // Check if running
 }
 else
 {
-    sprite_index = spr_player; // Set to normal sprite
+    if(run_jump &amp;&amp; abs(hsp) &lt; basemovespeed*runmult){ //stay in runjump sprite until below running speed
+        sprite_index = spr_player; // Set to normal sprite
+        run_jump =false;
+    }
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
         hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
@@ -251,11 +256,16 @@ if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed base
 if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool)
 {
     vsp = jump_pressed * -jumpspeed;
+    if(running &amp;&amp; jump_pressed){ // check if running when jumping
+        sprite_index = spr_player_runjump; //change to runjump sprite
+        run_jump = true; 
+    }
 }
 
-if(dashAttack){//Set hsp to dash attack speed if in attack, but before decceleration
-    hsp = dashDir*dashAttackSpeed;
+if(dashAttack){ //Set hsp to dash attack speed if in attack, but before decceleration
+    hsp = dashDir*dashAttackSpeed; //direction and speed
     attackTrigger = true;
+    sprite_index = spr_player_dash;
 }
 
 if(dashAttackTimer &lt; dashAttackCool &amp;&amp; !dashAttack){//Decelerate from attack
