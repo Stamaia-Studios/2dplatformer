@@ -404,7 +404,11 @@ if (throw_ok &amp;&amp; action_pressed)
     item_id = 0;
 }
 
-
+if(inv&lt;1)//this will allow movement through enemies during damage frames
+if(instance_exists(obj_enemy_blep))//make sure the enemy exists
+if(place_meeting(x, y, obj_enemy_blep)){//checks if the enemy meets the player
+hp--;//subtracts health away from player and triggers damage handling
+}
 
 /*
 
@@ -413,7 +417,9 @@ End Of Every Step Handlers
     • Respawning
 • Death
     • Reset Variables
-
+• Enemy Damage Handing
+    • Assuming the character moves into an enemy, knockback will be applied accordingly
+    
 */
 
 //Check if out of bounds, and cause damage to the player for death
@@ -427,25 +433,28 @@ if((self.x&lt;-200)||(self.x&gt;room_width+200)||(self.y&gt;room_height+200)){
 
 //checks for death
 if(hp&lt;1){
-    //sets speeds back to zero to prevent conflicts with spawn setup
-    hsp=0;vsp=1;
-    //sets the actual position back to start
-    x=spawn[0];y=spawn[1];
-    //1/3rd of a second at 60fps, of damage invulnerability
-    inv=inv_frames;
-    //resets health to prevent this death hadnler from running again
-    hp=max_hp;
-    //invincibility frame correcting
-    last_hp=hp;
+    hsp=0;vsp=1; //sets speeds back to zero to prevent conflicts with spawn setup
+    x=spawn[0];y=spawn[1];//sets the actual position back to start
+    inv=inv_frames;//1/3rd of a second at 60fps, of damage invulnerability
+    hp=max_hp;//resets health to prevent this death hadnler from running again
+    last_hp=hp;//invincibility frame correcting
 }
 
 if(hp!=last_hp){//damage frames handler
-    if(inv==0){
+    if(inv&lt;1){//makes sure the player is not still invincible
     //even if this is called after death reset, it will be equivalent
     inv=inv_frames;
     //reset health for more damage checking
     last_hp=hp;
-    }else hp = last_hp;
+    }else hp = last_hp;//if invincible, reset health to prior
+    /*
+    Added/Optional Knockback Handler
+        • Reversed Movements attempt to handle situations where the character may become stuck
+    */
+    //makes sure the recoil is 8, horizontally
+    if((abs(hsp)&lt;8)||(abs(hsp)&gt;8))
+    hsp=8*-sign(move);
+    vsp=-vsp;//-1 = 100% knockback -- -2 = 200% knockback
 }
 
 //Setting Damage Sprites, clickering every 6th frame FOR 3 FRAMES
@@ -456,6 +465,7 @@ if(inv&gt;0&amp;&amp;inv%6&lt;3){
 }
 //removes invincibility frames until none exist
 if(inv&gt;0)inv--;
+
 
 </string>
           </argument>
