@@ -32,8 +32,10 @@ targetpoints[0, 0] = 0;                             //Add inital position to the
 targetpoints[0, 1] = 0;                             //NOTE: To add new nodes to platform path add this code to the instance creation code
 originx = x;                                        //Start horizontal point of platform
 originy = y;                                        //Start vertical point of platform
-prevx = x;
-prevy = y;
+prevx = x;                                          //Holds the x value of the previous step
+prevy = y;                                          //Holds the y value of the previous step
+isactive = true;                                   //Bool to hold is platform is moving
+ispausing = true;                                   //Deactivates at each node?
 </string>
           </argument>
         </arguments>
@@ -56,28 +58,35 @@ prevy = y;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>//--Move platform along path--//
+            <string>// Activate when player steps on platform (Temp for testing)
+if (place_meeting(x, y-1, obj_player))
+{
+    isactive = true;
+}
 
-// Check if platform has reached the target - then make up the difference and place the
-// platform directly on the point
-if point_distance(x, y, originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1]) &lt; movespeed {
-    // Set platform to be exactly on point by moving the remaining distance
-    move_towards_point(originx + targetpoints[currenttarget, 0],
-                        originy + targetpoints[currenttarget, 1],
-                        point_distance(x, y, originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1]));
-    
-    // Redirect platform to next node
-    currenttarget += 1;
-    if currenttarget &gt;= array_height_2d(targetpoints) {
-        currenttarget = 0;
+//--Move platform along path--//
+// Do not move the platform if the platform is not active
+if isactive {
+    // Check if platform has reached the target - then make up the difference and place the platform directly on the current node
+    if point_distance(x, y, originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1]) &lt; movespeed {
+        // Set platform to be exactly on node by moving only the remaining distance
+        move_towards_point(originx + targetpoints[currenttarget, 0],
+                            originy + targetpoints[currenttarget, 1],
+                            point_distance(x, y, originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1]));
+        // Redirect platform to next node
+        currenttarget += 1;
+        if currenttarget &gt;= array_height_2d(targetpoints) {
+            currenttarget = 0;
+        }
+        // If the platform is pausing at each stop de-activate it when it reaches the next node
+        if ispausing { isactive = !isactive }
+    }else{
+        // Move platform towards the current target at the given speed
+        move_towards_point(originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1], movespeed);
     }
-}else{
-    // Move platform towards the current target at the given speed
-    move_towards_point(originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1], movespeed);
 }
 
 //--Move player if the two collide--//
-
 // Check if player is intersecting platform
 if (place_meeting(x, y-1, obj_player)) || (place_meeting(x, y+1, obj_player)) || (place_meeting(x-1, y, obj_player)) || (place_meeting(x+1, y, obj_player)){
     // Add the change in position from last step to the player position
@@ -96,7 +105,7 @@ if (place_meeting(x, y-1, obj_player)) || (place_meeting(x, y+1, obj_player)) ||
         if (distToPlayerTop = smallestDist)
         {
             obj_player.hsp_carry += (x - prevx);
-            obj_player.vsp_carry += (y - prevy);
+            obj_player.y += (y - prevy);
         }
         // Player under platform // Push player out of platform
         if (distToPlayerBottom = smallestDist)
@@ -113,7 +122,7 @@ if (place_meeting(x, y-1, obj_player)) || (place_meeting(x, y+1, obj_player)) ||
             //show_debug_message('RIGHT');
             while (((obj_player.bbox_left + obj_player.hsp_carry) - bbox_right) &lt;= 1)
             {
-                obj_player.hsp_carry += 1;
+                obj_player.x += 1;
             }
         }
         // Player to left of platform // Move player along with platform
@@ -122,11 +131,12 @@ if (place_meeting(x, y-1, obj_player)) || (place_meeting(x, y+1, obj_player)) ||
             //show_debug_message('LEFT');
             while (((obj_player.bbox_right + obj_player.hsp_carry) - bbox_left) &gt;= -1)
             {
-                obj_player.hsp_carry -= 1;
+                obj_player.x -= 1;
             }
         }
     }
 }
+
 // Set the prev x,y to be used next step
 prevx = x;
 prevy = y;
