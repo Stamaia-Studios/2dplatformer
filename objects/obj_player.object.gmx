@@ -84,6 +84,7 @@ run_jump = false;
 fallthrough = false;
 attackTrigger = false;
 facingDir = 1;
+apexFallTrigger = -4; // fall speed reqiured to recieve additional gravity
 
 chrH = 16; // half height of player in pixels
 chrW = 16; // half width of player in pixels
@@ -164,7 +165,6 @@ throw_ok = (has_throwable || has_boomerang) &amp;&amp; (!onground || running || 
 // pick up condition - set flag high if conditions met (idle, moving, running only)
 pick_up_ok = onground &amp;&amp; (running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attackTrigger;
 pWall_pickup_chk = place_meeting(x, y+1, obj_pWall) | place_meeting(x, y-1, obj_pWall) | place_meeting(x+1, y, obj_pWall) | place_meeting(x-1, y, obj_pWall);
-
 // Decrement timers
 if(dash_left_timer &gt; 0) dash_left_timer--;
 if(dash_right_timer &gt; 0) dash_right_timer--;
@@ -340,11 +340,12 @@ if (gliding &amp;&amp; !(vsp &lt;= maxfallspeed * glidemult))
 {
     vsp = maxfallspeed * glidemult;
 }else{ // If not gliding, and falling, increase gravity
-    if (vsp &gt; 0) &amp;&amp; (vsp &lt;= maxfallspeed)
+    if (vsp &gt; apexFallTrigger) &amp;&amp; (vsp &lt;= maxfallspeed)
     {
         vsp += grav * 2;
     }
 }
+
 /*
 if (gliding &amp;&amp; !(vsp &lt;= maxfallspeed * glidemult))
     vsp = maxfallspeed * glidemult;
