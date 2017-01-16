@@ -335,10 +335,20 @@ if (keyboard_check_released(key_jump) &amp;&amp; !sign(vsp))
 {
     vsp /= 2;
 }
-
 // If gliding, slow vertical movement by the glide multiplier
 if (gliding &amp;&amp; !(vsp &lt;= maxfallspeed * glidemult))
+{
     vsp = maxfallspeed * glidemult;
+}else{ // If not gliding, and falling, increase gravity
+    if (vsp &gt; 0) &amp;&amp; (vsp &lt;= maxfallspeed)
+    {
+        vsp += grav * 2;
+    }
+}
+/*
+if (gliding &amp;&amp; !(vsp &lt;= maxfallspeed * glidemult))
+    vsp = maxfallspeed * glidemult;
+*/
 
 vsp_final = vsp + vsp_carry;
 vsp_carry = 0;
@@ -359,7 +369,6 @@ y += vsp_final; // Perform vertical movement
 // action button event handler, pick up action takes priority over throws
 if (action_pressed)
 {
-
     // If pick up conditions are met then pick up object that character is on top of
 
     // power ups can be picked up even if carrying a throwable
