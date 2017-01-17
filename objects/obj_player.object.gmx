@@ -431,19 +431,19 @@ if (action_pressed)
             
             // pot
             if (throwable_id == 1) {
-                object_id = instance_create(x-(chrW*2), y-(chrH*2), obj_pot);
+                object_id = instance_create(x, y-(chrH*2), obj_pot);
                 object_id.throwDir = facingDir;
                 object_id.is_thrown = true;                
             }
             // rock
             else if (throwable_id == 2) {
-                object_id = instance_create(x-(chrW*2), y-(chrH*2), obj_rock);
+                object_id = instance_create(x, y-(chrH*2), obj_rock);
                 object_id.throwDir = facingDir;
                 object_id.is_thrown = true;    
             }
             // wall - they never die and can respawn
             else if (throwable_id == 3) {
-                object_id = instance_create(x-(chrW*2), y-(chrH*2), obj_pWall);
+                object_id = instance_create(x, y-(chrH*2), obj_pWall);
                 object_id.throwDir = facingDir;
                 object_id.is_thrown = true;   
             }
@@ -454,7 +454,7 @@ if (action_pressed)
         }
         // boomerangs are straight throw and always come back
         else if (has_boomerang) {
-            object_id = instance_create(x-(chrW), y-(chrH), obj_boomerang);
+            object_id = instance_create(x, y, obj_boomerang);
             object_id.throwDir = facingDir;
             object_id.is_thrown = true;
             has_boomerang = false;

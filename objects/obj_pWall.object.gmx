@@ -61,7 +61,7 @@ basemovespeed = 6;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>hitWall = place_meeting(x+1, y, obj_wall) | place_meeting(x-1, y, obj_wall) | place_meeting(x, y, obj_wall) | place_meeting(x, y+sign(vsp), obj_wall); // True if rock is hitting wall
+            <string>hitWall = place_meeting(x+4, y, obj_wall) | place_meeting(x-4, y, obj_wall) | place_meeting(x, y, obj_wall) | place_meeting(x, y+sign(vsp), obj_wall); // True if rock is hitting wall
 onground = place_meeting(x, y+1, obj_wall); 
 
 // player has grabbed item remove it from play area
@@ -79,7 +79,7 @@ if (is_thrown) {
         is_moving = true;
     }
 
-    // TODO add enemy hit and damage here or in enemy object!    
+    // TODO need to respawn wall if it goes down a pit
 
 
    

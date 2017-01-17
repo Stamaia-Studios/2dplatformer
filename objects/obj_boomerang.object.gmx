@@ -32,7 +32,7 @@ is_returning = false;
 is_falling = false;
 throwDir = 0; // facing direction
 
-boomerang_timer = 15;
+boomerang_timer = 60;
 objW = 16;
 objH = 16;
 
@@ -71,7 +71,7 @@ if(is_taken) {
     instance_destroy();
 }
 
-hitWall = place_meeting(x+3, y, obj_wall) | place_meeting(x-3, y, obj_wall); // True if rock is hitting wall
+hitWall = place_meeting(x+4, y, obj_wall) | place_meeting(x-4, y, obj_wall); // True if rock is hitting wall
 onground = place_meeting(x, y+1, obj_wall); 
 
 // player has grabbed item remove it from play area
@@ -108,7 +108,7 @@ if (is_thrown) {
         // return boomerang to player
         if (!is_falling &amp;&amp; collision_rectangle(x-objW, y-objH, x+objW, y+objH, obj_player, false, true) &gt; -1) {            
             object_id = collision_rectangle(x-objW, y-objH, x+objW, y+objH, obj_player, false, true);
-            if(object_id &gt; 0) {
+            if(object_id &gt; 0 &amp;&amp; !object_id.has_boomerang) {            
                 object_id.has_boomerang = true;
                 instance_destroy();            
             }
@@ -133,11 +133,12 @@ if (is_thrown) {
     }
     
     if(onground) {
-      //  hsp = 0;
+      //hsp = 0;
       vsp = 0;      
-      //  is_moving = false;
-      //  is_returning = false;
-      //  boomerang_timer = 15;
+      //is_moving = false;
+      //is_returning = false;
+      
+      //boomerang_timer = 15;
     }
 
     // horizontal movement
