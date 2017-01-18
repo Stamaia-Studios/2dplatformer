@@ -69,6 +69,7 @@ spawn[0] = x;spawn[1] = y;//default spawn information
 max_hp=10;//max allottment of health, e.g level up health
 hp = 10;// character health
 last_hp=hp;//health to determine damage
+last_dir=1;//last direction facing -- default is right
 </string>
           </argument>
         </arguments>
@@ -406,11 +407,11 @@ if (throw_ok &amp;&amp; action_pressed)
 
 if(inv&lt;1){//this will allow movement through enemies during damage frames
 //TODO ADD ENEMIES HERE
-/*
+//*
 if(instance_exists(obj_blep))//make sure the enemy exists
 if(place_meeting(x, y, obj_blep))//checks if the enemy meets the player
 hp--;//subtracts health away from player and triggers damage handling
-*/
+//*/
 }
 
 /*
@@ -424,6 +425,8 @@ End Of Every Step Handlers
     • Assuming the character moves into an enemy, knockback will be applied accordingly
     
 */
+
+if(move!=0)last_dir=move;
 
 //Check if out of bounds, and cause damage to the player for death
 //added some numbers for more leniency with auto killing
@@ -455,8 +458,16 @@ if(hp!=last_hp){//damage frames handler
         • Reversed Movements attempt to handle situations where the character may become stuck
     */
     //makes sure the recoil is 8, horizontally
-    if((abs(hsp)&lt;8)||(abs(hsp)&gt;8))
-    hsp=8*-sign(move);
+    if(hsp==0){
+        hsp=-last_dir*8;
+    }else{
+        if((abs(hsp)&lt;8)||(abs(hsp)&gt;8))
+        hsp=8*-sign(move);
+    }
+    
+    if(hsp!=0)
+    last_dir=sign(hsp);
+    
     vsp=-vsp;//-1 = 100% knockback -- -2 = 200% knockback
 }
 
