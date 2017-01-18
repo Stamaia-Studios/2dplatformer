@@ -407,11 +407,11 @@ if (throw_ok &amp;&amp; action_pressed)
 
 if(inv&lt;1){//this will allow movement through enemies during damage frames
 //TODO ADD ENEMIES HERE
-//*
+/*
 if(instance_exists(obj_blep))//make sure the enemy exists
 if(place_meeting(x, y, obj_blep))//checks if the enemy meets the player
 hp--;//subtracts health away from player and triggers damage handling
-//*/
+/*/
 }
 
 /*
@@ -426,6 +426,7 @@ End Of Every Step Handlers
     
 */
 
+//sets the direction facing to the current direction if moving or changing direction
 if(move!=0)last_dir=move;
 
 //Check if out of bounds, and cause damage to the player for death
@@ -460,13 +461,18 @@ if(hp!=last_hp){//damage frames handler
     //makes sure the recoil is 8, horizontally
     if(hsp==0){
         hsp=-last_dir*8;
-    }else{
+    }else{//if this is not 0, then make sure the recoil is = (+8 || -8)
         if((abs(hsp)&lt;8)||(abs(hsp)&gt;8))
         hsp=8*-sign(move);
     }
     
+    //OPTIONAL -- Currently on
+    //sets the last direction moved the the direction of the damage
+    /*this may cause infinte bounce loops, but it preents the player
+    from getting bumped all the way to start, assuming tanking though
+    a line of enmies*/
     if(hsp!=0)
-    last_dir=sign(hsp);
+    last_dir=sign(hsp);//sign is the direction of damage
     
     vsp=-vsp;//-1 = 100% knockback -- -2 = 200% knockback
 }
@@ -474,8 +480,8 @@ if(hp!=last_hp){//damage frames handler
 //Setting Damage Sprites, clickering every 6th frame FOR 3 FRAMES
 if(inv&gt;0&amp;&amp;inv%6&lt;3){
     if(image_alpha&lt;1)
-    image_alpha=1;
-    else image_alpha=.2;
+    image_alpha=1;//100% opaque
+    else image_alpha=.2;//20% opaque
     if(inv-1&lt;1)image_alpha=1;//make sure the sprite is not stuck at .3/1 opacity
 }
 //removes invincibility frames until none exist
