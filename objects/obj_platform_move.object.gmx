@@ -34,8 +34,11 @@ originx = x;                                        //Start horizontal point of 
 originy = y;                                        //Start vertical point of platform
 prevx = x;                                          //Holds the x value of the previous step
 prevy = y;                                          //Holds the y value of the previous step
-isactive = true;                                   //Bool to hold is platform is moving
+isactive = true;                                    //Bool to hold is platform is moving
 ispausing = true;                                   //Deactivates at each node?
+isstopped = true;                                   //When the platform is stopped
+pausetime = 80;                                     //Length of time to pause for. -1 indicates no unpausing
+currpausetime = pausetime;                          //Current timer
 </string>
           </argument>
         </arguments>
@@ -58,13 +61,7 @@ ispausing = true;                                   //Deactivates at each node?
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// Activate when player steps on platform (Temp for testing)
-if (place_meeting(x, y-1, obj_player))
-{
-    isactive = true;
-}
-
-//--Move platform along path--//
+            <string>//--Move platform along path--//
 // Do not move the platform if the platform is not active
 if isactive {
     // Check if platform has reached the target - then make up the difference and place the platform directly on the current node
@@ -79,10 +76,29 @@ if isactive {
             currenttarget = 0;
         }
         // If the platform is pausing at each stop de-activate it when it reaches the next node
-        if ispausing { isactive = !isactive }
+        if ispausing {
+            isactive = !isactive;
+            isstopped = true;
+        }
     }else{
         // Move platform towards the current target at the given speed
         move_towards_point(originx + targetpoints[currenttarget, 0], originy + targetpoints[currenttarget, 1], movespeed);
+        isstopped = false;
+    }
+}else{
+    speed = 0; // Immediately stops platform
+    isstopped = true; // Any stop position is considered a pseudo node. This is so the pause count down will continue to run
+}
+
+//Regulates automatic movement with the pause count down
+if isstopped &amp;&amp; !isactive &amp;&amp; pausetime != -1
+{
+    if currpausetime &gt; 0
+    {
+        currpausetime -= 1;
+    }else{
+        currpausetime = pausetime;
+        isactive = true;
     }
 }
 
