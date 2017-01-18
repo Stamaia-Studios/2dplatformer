@@ -237,9 +237,10 @@ else if (running &amp;&amp; move != 0) // Check if running
         dashDir = move;//attack direction
         sprite_index = spr_player_dash;
     }
-    else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under base movement speed, do this
+    else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under run speed, do this
     {
-        hsp = move * runspeed; // Move in direction at run speed
+        hsp += (move * runspeed)*0.1; // Move in direction at run speed
+        if (abs(hsp) &gt; runspeed) hsp = move * runspeed;
     }
 }
 else
@@ -248,6 +249,7 @@ else
         sprite_index = spr_player; // Set to normal sprite and stop long jump
         run_jump =false;
     }
+    
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
         hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
@@ -258,13 +260,17 @@ else
     }
     else if (!running &amp;&amp; abs(hsp) &gt; movespeed &amp;&amp; onground)
     {
-        hsp *= 0.95; // Exponential speed decay
-        if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below base speed, stop
+        hsp *= 0.95; // Exponential speed decay when recovering from running
+        if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below run speed, set to move speed
+    }
+    else if (move == 0 &amp;&amp; !onground &amp;&amp; !run_jump) // If not pressing movement keys, do this
+    {
+        hsp *= 0.9; // Exponential speed decay while in the air
+        if (abs(hsp) &lt; movespeed) hsp = 0; // If below base speed, stop
     }
     else if (move == 0 &amp;&amp; onground) // If not pressing movement keys, do this
     {
-        hsp *= 0.9; // Exponential speed decay
-        if (abs(hsp) &lt; movespeed) hsp = 0; // If below base speed, stop
+        hsp = 0; // Set speed to 0
     }
 }
 
