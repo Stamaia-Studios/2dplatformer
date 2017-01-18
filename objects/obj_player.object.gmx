@@ -404,10 +404,13 @@ if (throw_ok &amp;&amp; action_pressed)
     item_id = 0;
 }
 
-if(inv&lt;1)//this will allow movement through enemies during damage frames
-if(instance_exists(obj_enemy_blep))//make sure the enemy exists
-if(place_meeting(x, y, obj_enemy_blep)){//checks if the enemy meets the player
+if(inv&lt;1){//this will allow movement through enemies during damage frames
+//TODO ADD ENEMIES HERE
+/*
+if(instance_exists(obj_blep))//make sure the enemy exists
+if(place_meeting(x, y, obj_blep))//checks if the enemy meets the player
 hp--;//subtracts health away from player and triggers damage handling
+*/
 }
 
 /*
@@ -462,6 +465,7 @@ if(inv&gt;0&amp;&amp;inv%6&lt;3){
     if(image_alpha&lt;1)
     image_alpha=1;
     else image_alpha=.2;
+    if(inv-1&lt;1)image_alpha=1;//make sure the sprite is not stuck at .3/1 opacity
 }
 //removes invincibility frames until none exist
 if(inv&gt;0)inv--;
