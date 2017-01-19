@@ -41,11 +41,11 @@ dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
 dashtrigger = false;
-dashAttack = false;
-dashAttackSpeed = 6;
-dashAttackCool = 25;
+attackState = 0; //0-none, 1-dash, 2-crouch
+dashAttackSpeed = 6; //speed of the dash attack
+dashAttackCool = 25; //deceleration time
 dashAttackTimer = dashAttackCool;
-down_pressed = 0;
+down_pressed = 0; 
 jump_pressed = 0;
 run_jump = false;
 fallthrough = false;
@@ -197,7 +197,12 @@ else if (run_pressed &amp;&amp; !taptorun &amp;&amp; onground)
 if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCool) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-(sprite_height+1), obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
 {
     sprite_index = spr_player_crouching; // Set to crouching/sliding sprite
-    if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
+    if(attack_pressed &amp;&amp; attackState == 0){//if pressing attack and not already attacking
+        hsp = 0; //stop player, set attack state, change to crouch attack sprite, and create hitbox
+        attackState = 2;
+        sprite_index = spr_player_crouch_attack;
+        instance_create(x+((sprite_width)*move), y+(sprite_height)/2, obj_hb_crouch);//create the crouch attack hitbox object
+    }else if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
     {
         hsp *= 0.99 // Exponentially decrease speed
         if (abs(hsp) &lt; crouchspeed) hsp = sign(hsp) * crouchspeed; // If speed is now below the normal crouch speed, set it to that
@@ -213,10 +218,10 @@ else if (running &amp;&amp; move != 0) // Check if running
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
         hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
-    }else if (attack_pressed &amp;&amp; !dashAttack &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
+    }else if (attack_pressed &amp;&amp; attackState==0 &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
         instance_create(x+((sprite_width*1.5)*move), y, obj_hb_dash);//create the dash attack hitbox object
         dashAttackTimer = 0;//dash attack cool down reset
-        dashAttack = true;//is attacking
+        attackState = 1;//is attacking
         dashDir = move;//attack direction
         sprite_index = spr_player_dash;
     }
@@ -228,8 +233,10 @@ else if (running &amp;&amp; move != 0) // Check if running
 else
 {       //stay in runjump sprite until below running speed or gliding
     if((run_jump &amp;&amp; abs(hsp) &lt; basemovespeed*runmult) ||(run_jump &amp;&amp; gliding)){ 
-        sprite_index = spr_player; // Set to normal sprite
+        sprite_index = spr_player; // Set to normal sprite and stop long jump
         run_jump =false;
+    }else if(!run_jump){
+        sprite_index = spr_player;//set sprite to normal if there is no long jump
     }
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
@@ -263,13 +270,20 @@ if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 
     }
 }
 
-if(dashAttack){ //Set hsp to dash attack speed if in attack, but before decceleration
-    hsp = dashDir*dashAttackSpeed; //direction and speed
-    attackTrigger = true;
-    sprite_index = spr_player_dash;
+switch(attackState){
+    case 1:  //Set hsp to dash attack speed if in attack, but before decceleration
+        hsp = dashDir*dashAttackSpeed; //direction and speed
+        attackTrigger = true;
+        sprite_index = spr_player_dash;
+        break;
+    case 2:  //stop player if crouch attacking
+        hsp =0;
+        attackTrigger = true;
+        sprite_index = spr_player_crouch_attack;
+        break;
 }
 
-if(dashAttackTimer &lt; dashAttackCool &amp;&amp; !dashAttack){//Decelerate from attack
+if(dashAttackTimer &lt; dashAttackCool &amp;&amp; attackState != 1){//Decelerate from attack
     dashAttackTimer++;
     hsp = dashDir*dashAttackSpeed*(dashAttackCool-dashAttackTimer)/dashAttackCool;
     attackTrigger = false;
