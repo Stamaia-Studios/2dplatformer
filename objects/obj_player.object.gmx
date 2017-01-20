@@ -27,12 +27,13 @@
             <kind>1</kind>
             <string>/// Init Variables
 
+facing = 1; //last direction the player moved in
 grav = 0.2; // Gravity
-maxfallspeed = 10; // Max speed at which you can fall
+maxfallspeed = 8; // Max speed at which you can fall
 hsp = 0; // Horizontal Speed
 vsp = 0; // Vertical Speed
-jumpspeed = 7; // Jump Speed Constant
-basemovespeed = 6; // Movement Speed Constant
+jumpspeed = 6; // Jump Speed Constant
+basemovespeed = 2; // Movement Speed Constant
 crouchmult = 0.5; // Crouch movement multiplier
 runmult = 1.5 // Run movement multiplier
 movestatusmult = 1; // For buffs/debuffs
@@ -41,12 +42,13 @@ dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
 dashtrigger = false;
-dashAttack = false;
-dashAttackSpeed = 12;
-dashAttackCool = 20;
+attackState = 0; //0-none, 1-dash, 2-crouch
+dashAttackSpeed = 6; //speed of the dash attack
+dashAttackCool = 25; //deceleration time
 dashAttackTimer = dashAttackCool;
-down_pressed = 0;
+down_pressed = 0; 
 jump_pressed = 0;
+run_jump = false;
 fallthrough = false;
 attackTrigger = false;
 facingDir = 1;
@@ -61,6 +63,15 @@ shortsmult = 1; // used for running and jumping
 has_boomerang = false; // boomerang
 has_throwable = false; // throwable item
 throwable_id = 0; // place holder item id for pots/et;al
+
+
+inv = 0;//invincibility 'steps' where the character cannot be damaged
+inv_frames = 60;//frame native limit, potential 'Mario Star' effect -- 1 second at 60FPS
+spawn[0] = x;spawn[1] = y;//default spawn information
+max_hp=10;//max allottment of health, e.g level up health
+hp = 10;// character health
+last_hp=hp;//health to determine damage
+last_dir=1;//last direction facing -- default is right
 </string>
           </argument>
         </arguments>
@@ -128,6 +139,9 @@ onground = place_meeting(x, y+1, obj_wall); // True if player is on the ground
 
 // Calculate movement
 move = -left_pressed + right_pressed; // Will be -1 for left and +1 for right
+if(move != 0){
+    facing = move;
+}
 crouchspeed = (basemovespeed * crouchmult) * movestatusmult; // Get current crouch speed
 runspeed = (basemovespeed * runmult) * movestatusmult; // Get current run speed
 movespeed = basemovespeed * movestatusmult; // Get current walk speed
@@ -191,10 +205,15 @@ if (dashtrigger &amp;&amp; taptorun &amp;&amp; onground)
 else if (run_pressed &amp;&amp; !taptorun &amp;&amp; onground)
     running = true;
 
-if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCool) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-17, obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
+if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCool) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-(sprite_height+1), obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
 {
     sprite_index = spr_player_crouching; // Set to crouching/sliding sprite
-    if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
+    if(attack_pressed &amp;&amp; attackState == 0){//if pressing attack and not already attacking
+        hsp = 0; //stop player, set attack state, change to crouch attack sprite, and create hitbox
+        attackState = 2;
+        sprite_index = spr_player_crouch_attack;
+        instance_create(x+((sprite_width)*facing), y+(sprite_height)/2, obj_hb_crouch);//create the crouch attack hitbox object
+    }else if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
     {
         hsp *= 0.99 // Exponentially decrease speed
         if (abs(hsp) &lt; crouchspeed) hsp = sign(hsp) * crouchspeed; // If speed is now below the normal crouch speed, set it to that
@@ -209,12 +228,13 @@ else if (running &amp;&amp; move != 0) // Check if running
     sprite_index = spr_player; // Set to normal sprite
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
-        hsp += move * (runspeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
-    }else if (attack_pressed &amp;&amp; !dashAttack &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
-        instance_create(x+ 48*move, y, obj_hb_dash);//create the dash attack hitbox object
+        hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+    }else if (attack_pressed &amp;&amp; attackState==0 &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
+        instance_create(x+((sprite_width*1.5)*move), y, obj_hb_dash);//create the dash attack hitbox object
         dashAttackTimer = 0;//dash attack cool down reset
-        dashAttack = true;//is attacking
+        attackState = 1;//is attacking
         dashDir = move;//attack direction
+        sprite_index = spr_player_dash;
     }
     else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under base movement speed, do this
     {
@@ -222,8 +242,11 @@ else if (running &amp;&amp; move != 0) // Check if running
     }
 }
 else
-{
-    sprite_index = spr_player; // Set to normal sprite
+{       //stay in runjump sprite until below running speed or gliding
+    if((run_jump &amp;&amp; abs(hsp) &lt; basemovespeed*runmult) ||(run_jump &amp;&amp; gliding)){ 
+        sprite_index = spr_player; // Set to normal sprite and stop long jump
+        run_jump =false;
+    }
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
         hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
@@ -232,9 +255,9 @@ else
     {
         hsp = move * movespeed; // Move in direction at move speed
     }
-    else if (!run_pressed &amp;&amp; abs(hsp) &gt; movespeed &amp;&amp; onground)
+    else if (!running &amp;&amp; abs(hsp) &gt; movespeed &amp;&amp; onground)
     {
-        hsp *= 0.8; // Exponential speed decay
+        hsp *= 0.95; // Exponential speed decay
         if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below base speed, stop
     }
     else if (move == 0 &amp;&amp; onground) // If not pressing movement keys, do this
@@ -250,16 +273,30 @@ if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed base
 if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool)
 {
     vsp = jump_pressed * -jumpspeed;
+    if(running &amp;&amp; jump_pressed){ // check if running when jumping
+        sprite_index = spr_player_runjump; //change to runjump sprite
+        run_jump = true; 
+    }
 }
 
-if(dashAttack){//Set hsp to dash attack speed if in attack, but before decceleration
-    hsp = dashDir*dashAttackSpeed;
-    attackTrigger = true;
+switch(attackState){
+    case 1:  //Set hsp to dash attack speed if in attack, but before decceleration
+        hsp = dashDir*dashAttackSpeed; //direction and speed
+        attackTrigger = true;
+        sprite_index = spr_player_dash;
+        break;
+    case 2:  //stop player if crouch attacking
+        hsp =0;
+        attackTrigger = true;
+        sprite_index = spr_player_crouch_attack;
+        break;
 }
 
-if(dashAttackTimer &lt; dashAttackCool &amp;&amp; !dashAttack){//Decelerate from attack
+if(dashAttackTimer &lt; dashAttackCool &amp;&amp; attackState != 1){//Decelerate from attack
     dashAttackTimer++;
     hsp = dashDir*dashAttackSpeed*(dashAttackCool-dashAttackTimer)/dashAttackCool;
+    attackTrigger = false;
+}else if(attackState == 0){
     attackTrigger = false;
 }
 
@@ -461,6 +498,90 @@ if (action_pressed)
         }    
     }
 }
+
+
+if(inv&lt;1){//this will allow movement through enemies during damage frames
+//TODO ADD ENEMIES HERE
+/*
+if(instance_exists(obj_blep))//make sure the enemy exists
+if(place_meeting(x, y, obj_blep))//checks if the enemy meets the player
+hp--;//subtracts health away from player and triggers damage handling
+/*/
+}
+
+/*
+
+End Of Every Step Handlers
+• Out Of Bounds Checking
+    • Respawning
+• Death
+    • Reset Variables
+• Enemy Damage Handing
+    • Assuming the character moves into an enemy, knockback will be applied accordingly
+    
+*/
+
+//sets the direction facing to the current direction if moving or changing direction
+if(move!=0)last_dir=move;
+
+//Check if out of bounds, and cause damage to the player for death
+//added some numbers for more leniency with auto killing
+//there is no top kill -- gravity is assumed to pull the character back down
+if((self.x&lt;-200)||(self.x&gt;room_width+200)||(self.y&gt;room_height+200)){
+    //invincibility frame correcting
+    last_hp=0;
+    hp=0;//auto kills the player
+}
+
+//checks for death
+if(hp&lt;1){
+    hsp=0;vsp=1; //sets speeds back to zero to prevent conflicts with spawn setup
+    x=spawn[0];y=spawn[1];//sets the actual position back to start
+    inv=inv_frames;//1/3rd of a second at 60fps, of damage invulnerability
+    hp=max_hp;//resets health to prevent this death hadnler from running again
+    last_hp=hp;//invincibility frame correcting
+}
+
+if(hp!=last_hp){//damage frames handler
+    if(inv&lt;1){//makes sure the player is not still invincible
+    //even if this is called after death reset, it will be equivalent
+    inv=inv_frames;
+    //reset health for more damage checking
+    last_hp=hp;
+    }else hp = last_hp;//if invincible, reset health to prior
+    /*
+    Added/Optional Knockback Handler
+        • Reversed Movements attempt to handle situations where the character may become stuck
+    */
+    //makes sure the recoil is 8, horizontally
+    if(hsp==0){
+        hsp=-last_dir*8;
+    }else{//if this is not 0, then make sure the recoil is = (+8 || -8)
+        if((abs(hsp)&lt;8)||(abs(hsp)&gt;8))
+        hsp=8*-sign(move);
+    }
+    
+    //OPTIONAL -- Currently on
+    //sets the last direction moved the the direction of the damage
+    /*this may cause infinte bounce loops, but it preents the player
+    from getting bumped all the way to start, assuming tanking though
+    a line of enmies*/
+    if(hsp!=0)
+    last_dir=sign(hsp);//sign is the direction of damage
+    
+    vsp=-vsp;//-1 = 100% knockback -- -2 = 200% knockback
+}
+
+//Setting Damage Sprites, clickering every 6th frame FOR 3 FRAMES
+if(inv&gt;0&amp;&amp;inv%6&lt;3){
+    if(image_alpha&lt;1)
+    image_alpha=1;//100% opaque
+    else image_alpha=.2;//20% opaque
+    if(inv-1&lt;1)image_alpha=1;//make sure the sprite is not stuck at .3/1 opacity
+}
+//removes invincibility frames until none exist
+if(inv&gt;0)inv--;
+
 
 </string>
           </argument>

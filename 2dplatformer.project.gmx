@@ -7,9 +7,11 @@
   <sounds name="sound"/>
   <sprites name="sprites">
     <sprite>sprites\spr_player_crouching</sprite>
+    <sprite>sprites\spr_player_crouch_attack</sprite>
     <sprite>sprites\spr_player</sprite>
-    <sprite>sprites\spr_dash</sprite>
     <sprite>sprites\spr_player_dash</sprite>
+    <sprite>sprites\spr_player_runjump</sprite>
+    <sprite>sprites\spr_dash</sprite>
     <sprite>sprites\spr_wall</sprite>
     <sprite>sprites\spr_platform</sprite>
     <sprite>sprites\spr_platform_oneway</sprite>
@@ -31,6 +33,7 @@
     <object>objects\obj_slope_steep</object>
     <object>objects\spr_slope_shallow</object>
     <object>objects\obj_hb_dash</object>
+    <object>objects\obj_hb_crouch</object>
     <object>objects\obj_platform</object>
     <object>objects\obj_platform_oneway</object>
     <object>objects\obj_boomerang</object>
