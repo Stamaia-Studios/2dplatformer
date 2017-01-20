@@ -226,11 +226,12 @@ if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCoo
 }
 else if (running &amp;&amp; move != 0) // Check if running
 {
-    sprite_index = spr_player; // Set to normal sprite
+    sprite_index = spr_player_run; // Set to normal sprite
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
         hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
     }else if (attack_pressed &amp;&amp; attackState==0 &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
+    else if (attack_pressed &amp;&amp; !dashAttack &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
         instance_create(x+((sprite_width*1.5)*move), y, obj_hb_dash);//create the dash attack hitbox object
         dashAttackTimer = 0;//dash attack cool down reset
         attackState = 1;//is attacking
@@ -252,24 +253,35 @@ else
     
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
-        hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+        if (abs(hsp) &lt;= movespeed)
+        {
+            sprite_index = spr_player;
+            hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+        }
+        else if(abs(hsp) &gt; movespeed)
+        {
+            sprite_index = spr_player_run;
+            hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+        }
     }
     else if (abs(hsp) &lt; movespeed &amp;&amp; move != 0) // If under movement speed, do this
     {
+        sprite_index = spr_player;
         hsp = move * movespeed; // Move in direction at move speed
     }
-    else if (!running &amp;&amp; abs(hsp) &gt; movespeed &amp;&amp; onground)
+    else if (abs(hsp) &gt; movespeed &amp;&amp; onground)
     {
-        hsp *= 0.95; // Exponential speed decay when recovering from running
-        if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below run speed, set to move speed
+        hsp *= 0.97; // Exponential speed decay when recovering from running
+        //if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below move speed, set to move speed
     }
     else if (move == 0 &amp;&amp; !onground &amp;&amp; !run_jump) // If not pressing movement keys, do this
     {
         hsp *= 0.9; // Exponential speed decay while in the air
-        if (abs(hsp) &lt; movespeed) hsp = 0; // If below base speed, stop
+        //if (abs(hsp) &lt; movespeed) hsp = 0; // If below base speed, stop
     }
     else if (move == 0 &amp;&amp; onground) // If not pressing movement keys, do this
     {
+        sprite_index = spr_player;
         hsp = 0; // Set speed to 0
     }
 }
