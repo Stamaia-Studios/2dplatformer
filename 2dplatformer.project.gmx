@@ -19,9 +19,11 @@
     <sprite>sprites\srp_slope_shallow</sprite>
     <sprite>sprites\spr_health</sprite>
     <sprite>sprites\spr_boomerang</sprite>
-    <sprite>sprites\spr_throwable</sprite>
+    <sprite>sprites\spr_pot</sprite>
     <sprite>sprites\spr_gloves</sprite>
     <sprite>sprites\spr_shorts</sprite>
+    <sprite>sprites\spr_rock</sprite>
+    <sprite>sprites\spr_pWall</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
@@ -36,9 +38,11 @@
     <object>objects\obj_platform_oneway</object>
     <object>objects\obj_boomerang</object>
     <object>objects\obj_health</object>
-    <object>objects\obj_throwable</object>
+    <object>objects\obj_pot</object>
     <object>objects\obj_gloves</object>
     <object>objects\obj_shorts</object>
+    <object>objects\obj_rock</object>
+    <object>objects\obj_pWall</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>

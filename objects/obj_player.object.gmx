@@ -51,6 +51,7 @@ jump_pressed = 0;
 run_jump = false;
 fallthrough = false;
 attackTrigger = false;
+facingDir = 1;
 
 
 chrH = 16; // half height of player in pixels
@@ -145,17 +146,23 @@ crouchspeed = (basemovespeed * crouchmult) * movestatusmult; // Get current crou
 runspeed = (basemovespeed * runmult) * movestatusmult; // Get current run speed
 movespeed = basemovespeed * movestatusmult; // Get current walk speed
 
+// lock in facing direction of player
+if(move &gt; 0)
+    facingDir = 1;
+else if (move &lt; 0)
+    facingDir = -1;
+
 gliding = !onground &amp;&amp; sign(vsp) &amp;&amp; keyboard_check(key_jump); // Check if can glide
 
 if ((keyboard_check_released(key_down) || onground) &amp;&amp; fallthrough) // If in fallthrough and down key has been released or have touched ground, exit fallthrough
     fallthrough = false;
 
 // throw condition - set flag high if conditions are met (idle, moving, running, jumping only)
-throw_ok = has_throwable &amp;&amp; (!onground || running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attackTrigger;
+throw_ok = (has_throwable || has_boomerang) &amp;&amp; (!onground || running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attackTrigger;
 
 // pick up condition - set flag high if conditions met (idle, moving, running only)
 pick_up_ok = onground &amp;&amp; (running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attackTrigger;
-
+pWall_pickup_chk = place_meeting(x, y+1, obj_pWall) | place_meeting(x, y-1, obj_pWall) | place_meeting(x+1, y, obj_pWall) | place_meeting(x-1, y, obj_pWall);
 
 // Decrement timers
 if(dash_left_timer &gt; 0) dash_left_timer--;
@@ -341,13 +348,15 @@ if (place_meeting(x, y+vsp, obj_wall)) // Check if will hit floor/ceiling upon m
 y += vsp; // Perform vertical movement
 
 
-// If pick up conditions are met then pick up object that character is on top of
-if (pick_up_ok &amp;&amp; action_pressed)
+// action button event handler, pick up action takes priority over throws
+if (action_pressed)
 {
+
+    // If pick up conditions are met then pick up object that character is on top of
 
     // power ups can be picked up even if carrying a throwable
     // for now health is considered to be an automatic pickup
-    if (place_meeting(x, y, obj_gloves) &amp;&amp; !has_gloves) 
+    if (pick_up_ok &amp;&amp; place_meeting(x, y, obj_gloves) &amp;&amp; !has_gloves) 
     {
        
         // get the object ID - rect bounding box
@@ -362,7 +371,7 @@ if (pick_up_ok &amp;&amp; action_pressed)
         // tell object to disappear
         object_id.is_taken = true;
     }
-    else if (place_meeting(x, y, obj_shorts) &amp;&amp; !has_shorts) 
+    else if (pick_up_ok &amp;&amp; place_meeting(x, y, obj_shorts) &amp;&amp; !has_shorts) 
     {
     
         // get the object ID - rect bounding box
@@ -379,7 +388,7 @@ if (pick_up_ok &amp;&amp; action_pressed)
         object_id.is_taken = true;
     }
     
-    else if (place_meeting(x, y, obj_boomerang) &amp;&amp; !has_boomerang) 
+    else if (pick_up_ok &amp;&amp; place_meeting(x, y, obj_boomerang) &amp;&amp; !has_boomerang) 
     {
     
         // get the object ID - rect bounding box
@@ -394,11 +403,11 @@ if (pick_up_ok &amp;&amp; action_pressed)
         // tell object to disappear
         object_id.is_taken = true;     
     }
-    else if (place_meeting(x, y, obj_throwable) &amp;&amp; !has_throwable) 
+    else if (pick_up_ok &amp;&amp; place_meeting(x, y, obj_pot) &amp;&amp; !has_throwable) 
     {
     
         // get the object ID - rect bounding box
-        object_id = collision_rectangle(x-chrW, y-chrH, x+chrW, y+chrH, obj_throwable, false, true);
+        object_id = collision_rectangle(x-chrW, y-chrH, x+chrW, y+chrH, obj_pot, false, true);
     
         // stop any movement
         vsp = 0;    
@@ -411,17 +420,85 @@ if (pick_up_ok &amp;&amp; action_pressed)
         
         // tell object to disappear
         object_id.is_taken = true;      
-    }    
+    }
+    else if (pick_up_ok &amp;&amp; place_meeting(x, y, obj_rock) &amp;&amp; !has_throwable) 
+    {
+    
+        // get the object ID - rect bounding box
+        object_id = collision_rectangle(x-chrW, y-chrH, x+chrW, y+chrH, obj_rock, false, true);
+    
+        // stop any movement
+        vsp = 0;    
+        hsp = 0;
+       
+        has_throwable = true; 
+            
+        // get the items id so we can spawn it when throwing it
+        throwable_id = object_id.item_id;
+        
+        // tell object to disappear
+        object_id.is_taken = true;      
+    }                   
+    else if (pick_up_ok &amp;&amp; pWall_pickup_chk &amp;&amp; !has_throwable) 
+    {
+    
+        // get the object ID - rect bounding box
+        object_id = collision_rectangle(x-(chrW*1.5), y-(chrH*1.5), x+(chrW*1.5), y+(chrH*1.5), obj_pWall, false, true);
+    
+        // stop any movement
+        vsp = 0;    
+        hsp = 0;
+       
+        has_throwable = true; // throwable item like a pot, can damage enemies
+
+        // get the items id so we can spawn it when throwing it
+        throwable_id = object_id.item_id;
+        
+        // tell object to disappear
+        object_id.is_taken = true;      
+    }  // end of pick up actions               
+
+    
+    // throw action
+    else if (throw_ok) {
+        
+        // pots (wide sine and destroy), rocks (short sine and destroy), and walls (normal sine and plop)
+        // create an instance of the object based on id and then tell it to propel across game screen
+        if (has_throwable) {
+            
+            // pot
+            if (throwable_id == 1) {
+                object_id = instance_create(x, y-(chrH*2), obj_pot);
+                object_id.throwDir = facingDir;
+                object_id.is_thrown = true;                
+            }
+            // rock
+            else if (throwable_id == 2) {
+                object_id = instance_create(x, y-(chrH*2), obj_rock);
+                object_id.throwDir = facingDir;
+                object_id.is_thrown = true;    
+            }
+            // wall - they never die and can respawn
+            else if (throwable_id == 3) {
+                object_id = instance_create(x, y-(chrH*2), obj_pWall);
+                object_id.throwDir = facingDir;
+                object_id.is_thrown = true;   
+            }
+            
+            // player used throwable remove it from inventory
+            throwable_id = 0;
+            has_throwable = false;        
+        }
+        // boomerangs are straight throw and always come back
+        else if (has_boomerang) {
+            object_id = instance_create(x, y, obj_boomerang);
+            object_id.throwDir = facingDir;
+            object_id.is_thrown = true;
+            has_boomerang = false;
+        }    
+    }
 }
 
-
-// If throwable conditions are met then throw the object
-if (throw_ok &amp;&amp; action_pressed) 
-{
-    // TODO: throw the object 
-    has_item = false;    
-    item_id = 0;
-}
 
 if(inv&lt;1){//this will allow movement through enemies during damage frames
 //TODO ADD ENEMIES HERE

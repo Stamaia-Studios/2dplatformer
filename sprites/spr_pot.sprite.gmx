@@ -7,9 +7,9 @@
   <coltolerance>0</coltolerance>
   <sepmasks>0</sepmasks>
   <bboxmode>0</bboxmode>
-  <bbox_left>3</bbox_left>
-  <bbox_right>27</bbox_right>
-  <bbox_top>3</bbox_top>
+  <bbox_left>6</bbox_left>
+  <bbox_right>26</bbox_right>
+  <bbox_top>4</bbox_top>
   <bbox_bottom>31</bbox_bottom>
   <HTile>0</HTile>
   <VTile>0</VTile>
@@ -19,5 +19,7 @@
   <For3D>0</For3D>
   <width>32</width>
   <height>32</height>
-  <frames/>
+  <frames>
+    <frame index="0">images\spr_pot_0.png</frame>
+  </frames>
 </sprite>
