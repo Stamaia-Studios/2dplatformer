@@ -27,6 +27,7 @@
             <kind>1</kind>
             <string>/// Init Variables
 
+facing = 1; //last direction the player moved in
 grav = 0.2; // Gravity
 maxfallspeed = 8; // Max speed at which you can fall
 hsp = 0; // Horizontal Speed
@@ -137,6 +138,9 @@ onground = place_meeting(x, y+1, obj_wall); // True if player is on the ground
 
 // Calculate movement
 move = -left_pressed + right_pressed; // Will be -1 for left and +1 for right
+if(move != 0){
+    facing = move;
+}
 crouchspeed = (basemovespeed * crouchmult) * movestatusmult; // Get current crouch speed
 runspeed = (basemovespeed * runmult) * movestatusmult; // Get current run speed
 movespeed = basemovespeed * movestatusmult; // Get current walk speed
@@ -201,7 +205,7 @@ if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCoo
         hsp = 0; //stop player, set attack state, change to crouch attack sprite, and create hitbox
         attackState = 2;
         sprite_index = spr_player_crouch_attack;
-        instance_create(x+((sprite_width)*move), y+(sprite_height)/2, obj_hb_crouch);//create the crouch attack hitbox object
+        instance_create(x+((sprite_width)*facing), y+(sprite_height)/2, obj_hb_crouch);//create the crouch attack hitbox object
     }else if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
     {
         hsp *= 0.99 // Exponentially decrease speed
@@ -286,6 +290,8 @@ switch(attackState){
 if(dashAttackTimer &lt; dashAttackCool &amp;&amp; attackState != 1){//Decelerate from attack
     dashAttackTimer++;
     hsp = dashDir*dashAttackSpeed*(dashAttackCool-dashAttackTimer)/dashAttackCool;
+    attackTrigger = false;
+}else if(attackState == 0){
     attackTrigger = false;
 }
 
