@@ -31,6 +31,10 @@ is_thrown = false;
 is_moving = false;
 throwDir = 0; // facing direction
 
+// half size for collisions
+objW = 16;
+objH = 16;
+
 // movements
 vsp_init = -5;
 hsp_init = 9;
@@ -39,6 +43,7 @@ hsp = 0;
 grav = 0.2;
 maxfallspeed = 10;
 basemovespeed = 6;
+
 </string>
           </argument>
         </arguments>
@@ -61,8 +66,9 @@ basemovespeed = 6;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>hitWall = place_meeting(x+4, y, obj_wall) | place_meeting(x-4, y, obj_wall) | place_meeting(x, y, obj_wall) | place_meeting(x, y+sign(vsp), obj_wall); // True if rock is hitting wall
-onground = place_meeting(x, y+1, obj_wall); 
+            <string>// collison pre-check
+hitWall = place_meeting(x+hsp_init, y, obj_wall) | place_meeting(x-hsp_init, y, obj_wall) | place_meeting(x, y, obj_wall) | place_meeting(x, y+sign(vsp), obj_wall); // True if rock is hitting wall
+onGround = place_meeting(x, y+1, obj_wall); 
 
 // player has grabbed item remove it from play area
 if (is_taken) {
@@ -94,11 +100,11 @@ if (is_thrown) {
     }   
 }
 
-    if(hitWall) {
-        hsp = 0;        
-    }
+    //if(hitWall) {
+    //    hsp = 0;        
+    //}
     
-    if(onground) {
+    if(onGround) {
         hsp = 0;
         vsp = 0;
         is_thrown = false;
@@ -106,7 +112,26 @@ if (is_thrown) {
     }
 
     // horizontal movement
-    x += hsp;  
+    if(!hitWall)
+        x += hsp; 
+    else {
+        
+        hsp = 0;
+        i = 0;       
+         
+        if(is_thrown) {
+            for(i = 0; i &lt; hsp_init; i++) {
+                if(place_meeting(x+i, y, obj_wall)) {
+                    x += (i-1);
+                    break;
+                }
+                else if (place_meeting(x-i, y, obj_wall)) {
+                    x += -(i-1);
+                    break;
+                }           
+            }                
+        }
+    } 
 
     // vertical movement
     y += vsp;

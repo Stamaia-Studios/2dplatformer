@@ -66,13 +66,14 @@ basemovespeed = 6;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// player has grabbed item remove it from play area
+            <string>///boomerang_implmentation
+// player has grabbed item remove it from play area
 if(is_taken) {
     instance_destroy();
 }
 
-hitWall = place_meeting(x+4, y, obj_wall) | place_meeting(x-4, y, obj_wall); // True if rock is hitting wall
-onground = place_meeting(x, y+1, obj_wall); 
+hitWall = place_meeting(x+hsp_init, y, obj_wall) | place_meeting(x-hsp_init, y, obj_wall); // True if rock is hitting wall
+onGround = place_meeting(x, y+1, obj_wall); 
 
 // player has grabbed item remove it from play area
 if (is_taken) {
@@ -114,38 +115,62 @@ if (is_thrown) {
             }
         }        
     }
-   
-    // vertical movement    
-    //if (vsp &lt; maxfallspeed) {
-    //   vsp += grav; // Increase downward movement speed based on gravity 
-    //}
+}  
+
+
+// horizontal movement
+if (!hitWall) // no wall hit keep going until returning
+    x += hsp;  
+else {
     
-    // Slow vertical movement when jump button is released
-    //if (!sign(vsp)) {    
-    //    vsp /= 2;
-    //}   
+    // a wall was hit, fall to the ground
+    hsp = 0;            
+    is_falling = true; 
+           
+    if(is_thrown) {
+    vsp = grav;
+    
+        for (i = 0; i &lt; hsp_init; i++) {
+            if (place_meeting(x+i, y, obj_wall)) {
+                x += (i-1);
+                break;
+            }
+            else if (place_meeting(x-i, y, obj_wall)) {
+                x += -(i-1);
+                break;
+            }           
+        }                
+    }  
 }
 
-    if(hitWall) {
-        hsp = 0;        
-        vsp = 5;
-        is_falling = true;
+
+// vertical movement
+if (is_falling) {
+
+    // gravity effects
+    if (vsp &lt; maxfallspeed) {
+        vsp += grav; // Increase downward movement speed based on gravity 
     }
+   
+    // item needs to be manually picked up again
+    is_thrown = false;           
     
-    if(onground) {
-      //hsp = 0;
-      vsp = 0;      
-      //is_moving = false;
-      //is_returning = false;
-      
-      //boomerang_timer = 15;
-    }
+    if (place_meeting(x, y+vsp, obj_wall)) // Check if it will hit floor
+    {
+        while (!place_meeting(x, y+1, obj_wall)) // Move 1 in current direction until further movement would collide with the floor/ceiling
+        {
+            y += sign(vsp);
+        }
+        vsp = 0; // Prevent further vertical movement on this step
+        is_falling = false;
+    }           
+}
+else
+    vsp = 0;
 
-    // horizontal movement
-    x += hsp;  
+y += vsp;
 
-    // vertical movement
-    y += vsp;
+
 </string>
           </argument>
         </arguments>
