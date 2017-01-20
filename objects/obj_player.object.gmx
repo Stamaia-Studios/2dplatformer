@@ -239,8 +239,6 @@ else
     if((run_jump &amp;&amp; abs(hsp) &lt; basemovespeed*runmult) ||(run_jump &amp;&amp; gliding)){ 
         sprite_index = spr_player; // Set to normal sprite and stop long jump
         run_jump =false;
-    }else if(!run_jump){
-        sprite_index = spr_player;//set sprite to normal if there is no long jump
     }
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
