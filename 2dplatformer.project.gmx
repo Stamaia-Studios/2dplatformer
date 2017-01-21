@@ -21,6 +21,10 @@
     <sprite>sprites\spr_throwable</sprite>
     <sprite>sprites\spr_gloves</sprite>
     <sprite>sprites\spr_shorts</sprite>
+    <sprite>sprites\spr_blep</sprite>
+    <sprite>sprites\spr_blob</sprite>
+    <sprite>sprites\spr_echidna</sprite>
+    <sprite>sprites\spr_spider</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
@@ -37,6 +41,12 @@
     <object>objects\obj_throwable</object>
     <object>objects\obj_gloves</object>
     <object>objects\obj_shorts</object>
+    <object>objects\obj_blep</object>
+    <object>objects\obj_enemy</object>
+    <object>objects\obj_edchidna_lay</object>
+    <object>objects\obj_spider_smart</object>
+    <object>objects\obj_spider_dumb</object>
+    <object>objects\obj_edchidna_walk</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
