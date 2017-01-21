@@ -50,6 +50,7 @@
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
+    <room>rooms\tart_testing_room</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>
