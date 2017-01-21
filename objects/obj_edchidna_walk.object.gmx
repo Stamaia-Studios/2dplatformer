@@ -33,6 +33,8 @@ max_speed=.1;
 spawn[0] = x;
 spawn[1] = y;
 
+max_distance = 15;
+
 </string>
           </argument>
         </arguments>
@@ -55,15 +57,16 @@ spawn[1] = y;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>//Use event_inherited for collision detection
+            <string>///Actions
 
-if(abs(spawn[0]-x)&gt;15){
+//change direction at limit
+if(abs(spawn[0]-x)&gt;max_distance){
 dir=-dir;
 }
 
 hsp = sign(dir)*max_speed;
 
-
+//collision detecton
 event_inherited();
 
 if(place_meeting(x,y,obj_player)){

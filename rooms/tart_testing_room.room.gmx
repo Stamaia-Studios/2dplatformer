@@ -240,14 +240,6 @@
     <instance objName="obj_platform_oneway" x="1128" y="72" name="inst_E8989974" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_platform" x="864" y="120" name="inst_A4E5A11A" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_platform" x="864" y="96" name="inst_119D6BAB" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_edchidna_lay" x="600" y="288" name="inst_0DA135A0" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_edchidna_lay" x="240" y="288" name="inst_275E55DE" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_edchidna_lay" x="624" y="288" name="inst_FF4A5F9A" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_edchidna_lay" x="648" y="288" name="inst_4B5C6802" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_edchidna_walk" x="768" y="168" name="inst_A786E23D" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_spider_smart" x="312" y="96" name="inst_04874427" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_spider_smart" x="1104" y="168" name="inst_25385C7A" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_spider_dumb" x="552" y="216" name="inst_3020F13E" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
   </instances>
   <tiles/>
   <PhysicsWorld>0</PhysicsWorld>
