@@ -45,6 +45,7 @@
     <object>objects\obj_rock</object>
     <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
+    <object>objects\camera</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
