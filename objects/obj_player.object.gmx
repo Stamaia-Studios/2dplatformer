@@ -87,6 +87,9 @@ fallthrough = false;
 attackTrigger = false;
 facingDir = 1;
 apexFallTrigger = -4; // fall speed reqiured to recieve additional gravity
+maxFallTimer = 10; // Amount of steps before player can no longer jump while falling
+fallTimer = maxFallTimer; // Current steps before player can no longer jump while falling
+canJump = true; // Decides if the player can jump - Used to prevent double jumping
 
 chrH = 16; // half height of player in pixels
 chrW = 16; // half width of player in pixels
@@ -140,6 +143,19 @@ run_pressed = keyboard_check(key_run);
 action_pressed = keyboard_check_pressed(key_action); // pickup or throw
 
 onground = place_meeting(x, y+1, obj_wall); // True if player is on the ground
+
+if !onground // If the player is not on the ground
+{
+    fallTimer -= 1; // Reduce fall timer
+}else{ // Otherwise
+    canJump = true // The player is allowed to jump again 
+    fallTimer = maxFallTimer; // Fall timer is reset
+}
+
+if fallTimer &lt; 0 // If the fall timer has been reached
+{
+    canJump = false // Remove players ability to jump
+}
 
 // Calculate movement
 move = -left_pressed + right_pressed; // Will be -1 for left and +1 for right
@@ -295,8 +311,9 @@ else
 if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed based on gravity
 
 // Allow jumping if on floor, but don't allow it if on a platform, crouching, and not moving or while dash attacking
-if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool &amp;&amp; jump_pressed)
+if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool &amp;&amp; jump_pressed && canJump)
 {
+    canJump = false;
     vsp = -jumpspeed;
     if(running){ // check if running when jumping
         sprite_index = spr_player_runjump; //change to runjump sprite
