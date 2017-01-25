@@ -26,7 +26,12 @@
     <sprite>sprites\spr_platform_move</sprite>
     <sprite>sprites\spr_pWall</sprite>
   </sprites>
-  <backgrounds name="background"/>
+  <backgrounds name="background">
+    <background>background\bck_parallax_1</background>
+    <background>background\bck_parallax_2</background>
+    <background>background\bck_parallax_3</background>
+    <background>background\bck_parallax_4</background>
+  </backgrounds>
   <paths name="paths"/>
   <objects name="objects">
     <object>objects\obj_player</object>
@@ -45,6 +50,7 @@
     <object>objects\obj_rock</object>
     <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
+    <object>objects\obj_parallax</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
