@@ -70,6 +70,8 @@ crouchmult = 0.5; // Crouch movement multiplier
 runmult = 1.5 // Run movement multiplier
 movestatusmult = 1; // For buffs/debuffs
 glidemult = 0.25; // Glide speed mutlplier
+jumpboost = 1; // Horizontal boost on jump
+runjumpboost = 2; // Horizontal boost on runjump
 dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
@@ -243,6 +245,10 @@ else if (running &amp;&amp; move != 0) // Check if running
         hsp += (move * runspeed)*0.1; // Move in direction at run speed
         if (abs(hsp) &gt; runspeed) hsp = move * runspeed;
     }
+    else if (abs(hsp) &gt; runspeed &amp;&amp; onground)
+    {
+        hsp *= 0.96;
+    }
 }
 else
 {       //stay in runjump sprite until below running speed or gliding
@@ -289,13 +295,16 @@ else
 if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed based on gravity
 
 // Allow jumping if on floor, but don't allow it if on a platform, crouching, and not moving or while dash attacking
-if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool)
+if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool &amp;&amp; jump_pressed)
 {
-    vsp = jump_pressed * -jumpspeed;
-    if(running &amp;&amp; jump_pressed){ // check if running when jumping
+    vsp = -jumpspeed;
+    if(running){ // check if running when jumping
         sprite_index = spr_player_runjump; //change to runjump sprite
         run_jump = true; 
+        hsp += sign(hsp) * runjumpboost;
     }
+    else hsp += sign(hsp) * jumpboost;
+    
 }
 
 switch(attackState){
