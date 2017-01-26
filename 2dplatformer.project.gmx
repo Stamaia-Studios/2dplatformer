@@ -25,6 +25,13 @@
     <sprite>sprites\spr_rock</sprite>
     <sprite>sprites\spr_platform_move</sprite>
     <sprite>sprites\spr_pWall</sprite>
+    <sprite>sprites\spr_spider</sprite>
+    <sprite>sprites\spr_echidna</sprite>
+    <sprite>sprites\spr_enemy_blep</sprite>
+    <sprite>sprites\spr_croc_safe</sprite>
+    <sprite>sprites\spr_croc_harm</sprite>
+    <sprite>sprites\spr_snake</sprite>
+    <sprite>sprites\spr_LAZAHS</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
@@ -45,9 +52,18 @@
     <object>objects\obj_rock</object>
     <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
+    <object>objects\obj_enemy</object>
+    <object>objects\obj_spider_dumb</object>
+    <object>objects\obj_spider_smart</object>
+    <object>objects\obj_edchidna_walk</object>
+    <object>objects\obj_edchidna_lay</object>
+    <object>objects\obj_croc</object>
+    <object>objects\obj_snake</object>
+    <object>objects\obj_LAZAHS</object>
   </objects>
   <rooms name="rooms">
-    <room>rooms\room0</room>
+    <room>rooms\tart_testing_room</room>
+    <room>rooms\room1</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>

@@ -35,6 +35,9 @@ key_down = vk_down;
 key_run = vk_shift;
 taptorun = false;
 key_action = ord('C'); // pick_up and throw
+
+global.debug_graphics = true;
+
 </string>
           </argument>
         </arguments>
