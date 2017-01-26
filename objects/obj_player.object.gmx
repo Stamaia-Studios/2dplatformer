@@ -70,8 +70,8 @@ crouchmult = 0.5; // Crouch movement multiplier
 runmult = 1.5 // Run movement multiplier
 movestatusmult = 1; // For buffs/debuffs
 glidemult = 0.25; // Glide speed mutlplier
-jumpboost = 1; // Horizontal boost on jump
-runjumpboost = 2; // Horizontal boost on runjump
+jumpboost = 0.5; // Horizontal boost on jump
+runjumpboost = 1; // Horizontal boost on runjump
 dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
@@ -300,10 +300,12 @@ if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 
     vsp = -jumpspeed;
     if(running){ // check if running when jumping
         sprite_index = spr_player_runjump; //change to runjump sprite
-        run_jump = true; 
-        hsp += sign(hsp) * runjumpboost;
+        run_jump = true;
+        if (abs(hsp) &lt;= runspeed + runjumpboost)
+            hsp += sign(hsp) * runjumpboost;
     }
-    else hsp += sign(hsp) * jumpboost;
+    //else if(abs(hsp) &lt;= movespeed + jumpboost) 
+        //hsp += sign(hsp) * jumpboost;
     
 }
 
