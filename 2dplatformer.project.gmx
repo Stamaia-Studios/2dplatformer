@@ -46,6 +46,7 @@
     <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
     <object>objects\camera</object>
+    <object>objects\obj_pause</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>

@@ -3,8 +3,8 @@
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>0</depth>
-  <persistent>0</persistent>
+  <depth>-5</depth>
+  <persistent>-1</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,28 +25,14 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///choose camera
-cameraState = 2 // 1 - fixed on player
-                // 2 - follows player
-                // 3 - leads player
-                
-vOffset = 50; //the vertical offset of the camera from the player
-
-//follow camera variable//////////////////////////////////////////////////////////
-lag = 10; //how much the camera lags behind
-
-//lead camera variables (These variables are finicky, since they affect each other)
-leadLagX = 5; //divides the speed the camera tries to return to the player
-leadLagY = 3; 
-leadDistX = 2; //multiplier of the player's speed used to advance the camera infront
-leadDistY = 2;
-//////////////////////////////////////////////////////////////////////////////////
+            <string>///Variables
+global.pause = false;
 </string>
           </argument>
         </arguments>
       </action>
     </event>
-    <event eventtype="3" enumb="0">
+    <event eventtype="8" enumb="0">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -63,30 +49,44 @@ leadDistY = 2;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///Camera Follow
-if global.pause {exit;} // Do not do anything when game is paused
-if(instance_exists(obj_player)){
-    xV = view_xview[0]+(view_wview[0]/2);
-    yV = view_yview[0]+(view_hview[0]/2);
-    switch(cameraState){
-        case 1: //fixed camera - adds the difference between the view and player
-        view_xview[0] += (obj_player.x-xV); 
-        view_yview[0] += (obj_player.y-vOffset-yV);
-        break;
-        case 2: //follow camera - adds a fraction of the difference between them
-        view_xview[0] += (obj_player.x-xV) / lag;
-        view_yview[0] += (obj_player.y-vOffset-yV) / lag;
-        break;
-        case 3: //displaced by player speed and returned by difference, with multipliers
-        view_xview[0] += leadDistX*obj_player.hsp + (obj_player.x-xV)/leadLagX;
-        view_yview[0] += leadDistY*obj_player.vsp + (obj_player.y-vOffset-yV)/leadLagY;
-        break;
-    }
+            <string>if global.pause
+{
+    //Backdrop
+    draw_set_color(c_black);
+    draw_set_alpha(0.7);
+    draw_rectangle(0, 0, room_width, room_height, 0);
+    
+    //Text
+    draw_set_halign(fa_center);
+    draw_set_color(c_white);
+    draw_set_alpha(1);
+    draw_text((view_xview + (view_wview / 2)), (view_yview + (view_hview / 3)), "Game Paused");
+    draw_set_color(c_black);
 }
-// keep camera in room
-view_xview[0]= clamp(view_xview[0], 0, room_width - view_wview[0]);
-view_yview[0]= clamp(view_yview[0], 0, room_height - view_hview[0]);
-
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="27">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Toggle pause
+global.pause = !global.pause;
 </string>
           </argument>
         </arguments>

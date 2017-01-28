@@ -62,6 +62,7 @@ currpausetime = pausetime;                          //Current timer
           <argument>
             <kind>1</kind>
             <string>//--Move platform along path--//
+if global.pause {exit;} // Do not do anything when game is paused
 // Do not move the platform if the platform is not active
 if isactive {
     // Check if platform has reached the target - then make up the difference and place the platform directly on the current node
