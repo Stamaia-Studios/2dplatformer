@@ -70,6 +70,8 @@ crouchmult = 0.5; // Crouch movement multiplier
 runmult = 1.5 // Run movement multiplier
 movestatusmult = 1; // For buffs/debuffs
 glidemult = 0.25; // Glide speed mutlplier
+jumpboost = 0.5; // Horizontal boost on jump
+runjumpboost = 1; // Horizontal boost on runjump
 dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
@@ -84,6 +86,7 @@ run_jump = false;
 fallthrough = false;
 attackTrigger = false;
 facingDir = 1;
+apexFallTrigger = -4; // fall speed reqiured to recieve additional gravity
 
 chrH = 16; // half height of player in pixels
 chrW = 16; // half width of player in pixels
@@ -164,7 +167,6 @@ throw_ok = (has_throwable || has_boomerang) &amp;&amp; (!onground || running || 
 // pick up condition - set flag high if conditions met (idle, moving, running only)
 pick_up_ok = onground &amp;&amp; (running || move || move == 0) &amp;&amp; !down_pressed &amp;&amp; !gliding &amp;&amp; !dashtrigger &amp;&amp; !attackTrigger;
 pWall_pickup_chk = place_meeting(x, y+1, obj_pWall) | place_meeting(x, y-1, obj_pWall) | place_meeting(x+1, y, obj_pWall) | place_meeting(x-1, y, obj_pWall);
-
 // Decrement timers
 if(dash_left_timer &gt; 0) dash_left_timer--;
 if(dash_right_timer &gt; 0) dash_right_timer--;
@@ -226,20 +228,26 @@ if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCoo
 }
 else if (running &amp;&amp; move != 0) // Check if running
 {
-    sprite_index = spr_player; // Set to normal sprite
+    sprite_index = spr_player_run; // Set to normal sprite
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
         hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
     }else if (attack_pressed &amp;&amp; attackState==0 &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
+    else if (attack_pressed &amp;&amp; !dashAttack &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
         instance_create(x+((sprite_width*1.5)*move), y, obj_hb_dash);//create the dash attack hitbox object
         dashAttackTimer = 0;//dash attack cool down reset
         attackState = 1;//is attacking
         dashDir = move;//attack direction
         sprite_index = spr_player_dash;
     }
-    else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under base movement speed, do this
+    else if (abs(hsp) &lt; runspeed &amp;&amp; move != 0) // If under run speed, do this
     {
-        hsp = move * runspeed; // Move in direction at run speed
+        hsp += (move * runspeed)*0.1; // Move in direction at run speed
+        if (abs(hsp) &gt; runspeed) hsp = move * runspeed;
+    }
+    else if (abs(hsp) &gt; runspeed &amp;&amp; onground)
+    {
+        hsp *= 0.96;
     }
 }
 else
@@ -248,36 +256,57 @@ else
         sprite_index = spr_player; // Set to normal sprite and stop long jump
         run_jump =false;
     }
+    
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
-        hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+        if (abs(hsp) &lt;= movespeed)
+        {
+            sprite_index = spr_player;
+            hsp += move * (movespeed/2); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+        }
+        else if(abs(hsp) &gt; movespeed)
+        {
+            sprite_index = spr_player_run;
+            hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
+        }
     }
     else if (abs(hsp) &lt; movespeed &amp;&amp; move != 0) // If under movement speed, do this
     {
+        sprite_index = spr_player;
         hsp = move * movespeed; // Move in direction at move speed
     }
-    else if (!running &amp;&amp; abs(hsp) &gt; movespeed &amp;&amp; onground)
+    else if (abs(hsp) &gt; movespeed &amp;&amp; onground)
     {
-        hsp *= 0.95; // Exponential speed decay
-        if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below base speed, stop
+        hsp *= 0.97; // Exponential speed decay when recovering from running
+        //if (abs(hsp) &lt;= movespeed) hsp = move * movespeed; // If below move speed, set to move speed
+    }
+    else if (move == 0 &amp;&amp; !onground &amp;&amp; !run_jump) // If not pressing movement keys, do this
+    {
+        hsp *= 0.9; // Exponential speed decay while in the air
+        //if (abs(hsp) &lt; movespeed) hsp = 0; // If below base speed, stop
     }
     else if (move == 0 &amp;&amp; onground) // If not pressing movement keys, do this
     {
-        hsp *= 0.9; // Exponential speed decay
-        if (abs(hsp) &lt; movespeed) hsp = 0; // If below base speed, stop
+        sprite_index = spr_player;
+        hsp = 0; // Set speed to 0
     }
 }
 
 if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed based on gravity
 
 // Allow jumping if on floor, but don't allow it if on a platform, crouching, and not moving or while dash attacking
-if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool)
+if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool &amp;&amp; jump_pressed)
 {
-    vsp = jump_pressed * -jumpspeed;
-    if(running &amp;&amp; jump_pressed){ // check if running when jumping
+    vsp = -jumpspeed;
+    if(running){ // check if running when jumping
         sprite_index = spr_player_runjump; //change to runjump sprite
-        run_jump = true; 
+        run_jump = true;
+        if (abs(hsp) &lt;= runspeed + runjumpboost)
+            hsp += sign(hsp) * runjumpboost;
     }
+    //else if(abs(hsp) &lt;= movespeed + jumpboost) 
+        //hsp += sign(hsp) * jumpboost;
+    
 }
 
 switch(attackState){
@@ -335,10 +364,21 @@ if (keyboard_check_released(key_jump) &amp;&amp; !sign(vsp))
 {
     vsp /= 2;
 }
-
 // If gliding, slow vertical movement by the glide multiplier
 if (gliding &amp;&amp; !(vsp &lt;= maxfallspeed * glidemult))
+{
     vsp = maxfallspeed * glidemult;
+}else{ // If not gliding, and falling, increase gravity
+    if (vsp &gt; apexFallTrigger) &amp;&amp; (vsp &lt;= maxfallspeed)
+    {
+        vsp += grav * 2;
+    }
+}
+
+/*
+if (gliding &amp;&amp; !(vsp &lt;= maxfallspeed * glidemult))
+    vsp = maxfallspeed * glidemult;
+*/
 
 vsp_final = vsp + vsp_carry;
 vsp_carry = 0;
@@ -359,7 +399,6 @@ y += vsp_final; // Perform vertical movement
 // action button event handler, pick up action takes priority over throws
 if (action_pressed)
 {
-
     // If pick up conditions are met then pick up object that character is on top of
 
     // power ups can be picked up even if carrying a throwable
