@@ -310,7 +310,7 @@ else
 
 if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed based on gravity
 
-// Allow jumping if on floor, but don't allow it if on a platform, crouching, and not moving or while dash attacking
+if place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed{ // Checks that player is not trying to fall down platform
 if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool &amp;&amp; jump_pressed && canJump)
 {
     canJump = false;
@@ -323,7 +323,7 @@ if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 
     }
     //else if(abs(hsp) &lt;= movespeed + jumpboost) 
         //hsp += sign(hsp) * jumpboost;
-    
+
 }
 
 switch(attackState){
