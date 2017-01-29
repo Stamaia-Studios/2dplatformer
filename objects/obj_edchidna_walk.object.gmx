@@ -28,7 +28,7 @@
             <string>///Create Enemy Variables
 //call the parent creation code and other single instance code
 event_inherited();
-max_speed=.1;
+max_speed=.05;
 
 spawn[0] = x;
 spawn[1] = y;

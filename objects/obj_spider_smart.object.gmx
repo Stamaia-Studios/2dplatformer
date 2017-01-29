@@ -68,7 +68,7 @@ draw_enable_drawevent(true);//allow anything to be drawn
 
 //only activate falling in this range
 //pretty much all the checks needed to not go too far or anything
-if(abs(obj_player.x-x)&lt;view_width){
+if(abs(obj_player.x-x)&lt;view_width&amp;&amp;obj_player.y&gt;=spawn[1]){
 if(y&lt; obj_player.bbox_bottom){
 maxfallspeed=.3;
 }else{
@@ -137,7 +137,7 @@ draw_line(spawn[0],spawn[1]-abs(bbox_top-bbox_bottom),x,y-abs(bbox_top-bbox_bott
 //make sure to actually draw the sprite :'V
 draw_self();
 
-if(global.debug_graphics){
+if(debug_graphics){
 
 draw_set_color(c_red);
 

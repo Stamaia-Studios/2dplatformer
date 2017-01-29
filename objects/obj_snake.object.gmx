@@ -130,7 +130,7 @@ if((self.x&lt;-200)||(self.x&gt;room_width+200)||(self.y&gt;room_height+200||sel
 
 draw_self();
 
-if(global.debug_graphics){
+if(debug_graphics){
 draw_set_color(c_red);
 
 if(dist&lt;view_distance&amp;&amp;dist&gt;hide_distance)

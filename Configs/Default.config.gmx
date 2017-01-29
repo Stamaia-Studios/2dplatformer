@@ -650,5 +650,9 @@
     <option_xbone_texture_page>1024</option_xbone_texture_page>
     <option_xbone_title_id></option_xbone_title_id>
   </Options>
-  <ConfigConstants/>
+  <ConfigConstants>
+    <constants number="1">
+      <constant name="debug_graphics">true</constant>
+    </constants>
+  </ConfigConstants>
 </Config>

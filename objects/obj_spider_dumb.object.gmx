@@ -84,15 +84,17 @@ if(!canfall&amp;&amp;!climbing)
 wait++;
 
 //determines if this should move
-if((wait&gt;=max_wait)&amp;&amp;abs(obj_player.x-x)&lt;40&amp;&amp;!canfall&amp;&amp;!climbing){
+if((wait&gt;=max_wait)&amp;&amp;abs(obj_player.x-x)&lt;view_width&amp;&amp;!canfall&amp;&amp;!climbing&amp;&amp;obj_player.y&gt;=spawn[1]){
 canfall=true;
 maxfallspeed=.3;
 wait=0;//resets counter to create wait times as predetermined
 }
 
 //check if this will go back up
+//changed to allow any distance before traveling back up
+if(!climbing&amp;&amp;canfall&amp;&amp;(place_meeting(x,y+1,obj_wall))){
 //go back up if limit has been reached or is hitting a wall (alt wall check needed)
-if(canfall&amp;&amp;(abs(spawn[1]-y)&gt;=maxfalldistance)){
+//if(canfall&amp;&amp;(abs(spawn[1]-y)&gt;=maxfalldistance)){
 climbing = true;
 canfall=false;
 maxfallspeed=0;
@@ -150,14 +152,14 @@ draw_set_colour(c_white);//set the drawing color to white
 draw_line(spawn[0],spawn[1]-abs(bbox_top-bbox_bottom),x,y-abs(bbox_top-bbox_bottom));
 
 //make sure to actually draw the sprite :'V
-draw_self();
+draw_sprite(spr_spider,0,x,y);
 
-if(global.debug_graphics){
+if(debug_graphics){
 
 draw_set_color(c_red);
 
 draw_rectangle(spawn[0]-abs(bbox_left-bbox_right)*2,spawn[1],spawn[0]+view_width,
-spawn[1]+maxfalldistance,1);
+spawn[1]+room_height,1);
 
 
 }
