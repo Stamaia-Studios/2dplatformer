@@ -9,6 +9,7 @@
     <sprite>sprites\spr_player_crouching</sprite>
     <sprite>sprites\spr_player_crouch_attack</sprite>
     <sprite>sprites\spr_player</sprite>
+    <sprite>sprites\spr_player_run</sprite>
     <sprite>sprites\spr_player_dash</sprite>
     <sprite>sprites\spr_player_runjump</sprite>
     <sprite>sprites\spr_dash</sprite>
