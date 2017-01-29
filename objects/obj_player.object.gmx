@@ -232,8 +232,8 @@ else if (running &amp;&amp; move != 0) // Check if running
     if (sign(hsp) != sign(move) &amp;&amp; move != 0 &amp;&amp; hsp != 0) // If changing movement directions, do this
     {
         hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
-    }else if (attack_pressed &amp;&amp; attackState==0 &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
-    else if (attack_pressed &amp;&amp; !dashAttack &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
+    }
+    else if (attack_pressed &amp;&amp; attackState==0 &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
         instance_create(x+((sprite_width*1.5)*move), y, obj_hb_dash);//create the dash attack hitbox object
         dashAttackTimer = 0;//dash attack cool down reset
         attackState = 1;//is attacking
