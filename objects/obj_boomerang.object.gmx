@@ -66,7 +66,9 @@ basemovespeed = 6;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///boomerang_implmentation
+            <string>if global.pause {exit;} // Do not do anything when game is paused
+
+///boomerang_implmentation
 // player has grabbed item remove it from play area
 if(is_taken) {
     instance_destroy();

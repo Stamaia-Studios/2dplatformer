@@ -61,7 +61,8 @@ basemovespeed = 6;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>hitWall = place_meeting(x, y, obj_wall) | place_meeting(x, y+sign(vsp), obj_wall); // True if rock is hitting wall
+            <string>if global.pause {exit;} // Do not do anything when game is paused
+hitWall = place_meeting(x, y, obj_wall) | place_meeting(x, y+sign(vsp), obj_wall); // True if rock is hitting wall
 
 // player has grabbed item remove it from play area
 if (is_taken) {

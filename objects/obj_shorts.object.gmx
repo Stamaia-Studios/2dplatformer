@@ -48,7 +48,8 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// player has grabbed item remove it from play area
+            <string>if global.pause {exit;} // Do not do anything when game is paused
+// player has grabbed item remove it from play area
 if(is_taken) {
     instance_destroy();
 }
