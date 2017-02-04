@@ -10,7 +10,19 @@
   <persistent>0</persistent>
   <colour>12632256</colour>
   <showcolour>-1</showcolour>
-  <code></code>
+  <code>// Define states player can be in
+enum state{
+    normal,
+    dashing,
+    platform
+}
+
+// Start playing room music
+musicPlayer01 = instance_create(0, 0, obj_music_player);
+musicPlayer01.loopStart = 15;
+musicPlayer01.loopEnd = 67;
+musicPlayer01.endStart= 64;
+scr_music_play(snd_BossTheme_8Bit_Test, musicPlayer01);</code>
   <enableViews>-1</enableViews>
   <clearViewBackground>0</clearViewBackground>
   <clearDisplayBuffer>-1</clearDisplayBuffer>
@@ -41,7 +53,7 @@
     <background visible="0" foreground="0" name="" x="0" y="0" htiled="-1" vtiled="-1" hspeed="0" vspeed="0" stretch="0"/>
   </backgrounds>
   <views>
-    <view visible="-1" objName="" xview="0" yview="0" wview="512" hview="288" xport="0" yport="0" wport="512" hport="288" hborder="112" vborder="98" hspeed="-1" vspeed="-1"/>
+    <view visible="-1" objName="&lt;undefined&gt;" xview="0" yview="0" wview="512" hview="288" xport="0" yport="0" wport="512" hport="288" hborder="112" vborder="98" hspeed="-1" vspeed="-1"/>
     <view visible="0" objName="&lt;undefined&gt;" xview="0" yview="0" wview="1024" hview="768" xport="0" yport="0" wport="1024" hport="768" hborder="32" vborder="32" hspeed="-1" vspeed="-1"/>
     <view visible="0" objName="&lt;undefined&gt;" xview="0" yview="0" wview="1024" hview="768" xport="0" yport="0" wport="1024" hport="768" hborder="32" vborder="32" hspeed="-1" vspeed="-1"/>
     <view visible="0" objName="&lt;undefined&gt;" xview="0" yview="0" wview="1024" hview="768" xport="0" yport="0" wport="1024" hport="768" hborder="32" vborder="32" hspeed="-1" vspeed="-1"/>
@@ -123,11 +135,10 @@
     <instance objName="obj_platform_oneway" x="66" y="144" name="inst_72EE27BD" locked="0" code="" scaleX="0.5" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_boomerang" x="456" y="240" name="inst_32B72D0F" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_gloves" x="408" y="240" name="inst_BBA8BC58" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="&lt;undefined&gt;" x="384" y="240" name="inst_0ED66D7D" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_wall" x="1176" y="144" name="inst_FEAE76FD" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_wall" x="1176" y="96" name="inst_F62A98E7" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_wall" x="720" y="336" name="inst_80D11133" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="obj_platform_move" x="288" y="496" name="inst_E4F11711" locked="0" code="movespeed = 1;&#xA;targetpoints[1, 0] = 200;&#xA;targetpoints[1, 1] = 0;&#xA;targetpoints[2, 0] = 200;&#xA;targetpoints[2, 1] = -100;&#xA;targetpoints[3, 0] = 200;&#xA;targetpoints[3, 1] = 0;&#xA;identifier = 0;&#xA;" scaleX="4" scaleY="1" colour="4294967295" rotation="0"/>
+    <instance objName="obj_platform_move" x="192" y="264" name="inst_E4F11711" locked="0" code="movespeed = 1;&#xA;targetpoints[1, 0] = 200;&#xA;targetpoints[1, 1] = 0;&#xA;targetpoints[2, 0] = 200;&#xA;targetpoints[2, 1] = -100;&#xA;targetpoints[3, 0] = 200;&#xA;targetpoints[3, 1] = 0;&#xA;identifier = 0;&#xA;" scaleX="4" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_wall" x="744" y="336" name="inst_B59276FC" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_wall" x="768" y="336" name="inst_6C323350" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="obj_wall" x="792" y="336" name="inst_900F3903" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
