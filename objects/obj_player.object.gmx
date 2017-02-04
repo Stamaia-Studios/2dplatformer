@@ -76,10 +76,11 @@ dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
 dashtrigger = false;
-attackState = 0; //0-none, 1-dash, 2-crouch
 dashAttackSpeed = 6; //speed of the dash attack
 dashAttackCool = 25; //deceleration time
-dashAttackTimer = dashAttackCool;
+dashAttackTimer = dashAttackCool; //timer for dash attack
+attackCool = 7; //timer for general attack
+attackTimer = 0;
 down_pressed = 0; 
 jump_pressed = 0;
 run_jump = false;
@@ -87,6 +88,14 @@ fallthrough = false;
 attackTrigger = false;
 facingDir = 1;
 apexFallTrigger = -4; // fall speed reqiured to recieve additional gravity
+enum attackStates{
+    none,
+    stand,
+    dash,
+    crouch,
+    aerial
+}
+attackState=attackStates.none;
 
 chrH = 16; // half height of player in pixels
 chrW = 16; // half width of player in pixels
@@ -211,9 +220,9 @@ else if (run_pressed &amp;&amp; !taptorun &amp;&amp; onground)
 if((down_pressed &amp;&amp; onground &amp;&amp; dashAttackTimer == dashAttackCool) || (sprite_index == spr_player_crouching &amp;&amp; place_meeting(x, y-(sprite_height+1), obj_wall))) // Slide/crouch if touching ground and holding down or under an object that is short than the player and already crouhing/sliding
 {
     sprite_index = spr_player_crouching; // Set to crouching/sliding sprite
-    if(attack_pressed &amp;&amp; attackState == 0){//if pressing attack and not already attacking
+    if(attack_pressed &amp;&amp; attackState == attackStates.none &amp;&amp; attackTimer == attackCool){//if pressing attack and not already attacking
         hsp = 0; //stop player, set attack state, change to crouch attack sprite, and create hitbox
-        attackState = 2;
+        attackState = attackStates.crouch;
         sprite_index = spr_player_crouch_attack;
         instance_create(x+((sprite_width)*facing), y+(sprite_height)/2, obj_hb_crouch);//create the crouch attack hitbox object
     }else if (abs(hsp) &gt; movespeed) // Slide if moving faster than base movement speed
@@ -233,10 +242,10 @@ else if (running &amp;&amp; move != 0) // Check if running
     {
         hsp += move * (movespeed/8); // Start moving in other direction by first cancelling out existing momentum, with slight penalty
     }
-    else if (attack_pressed &amp;&amp; attackState==0 &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
+    else if (attack_pressed &amp;&amp; attackState == attackStates.none &amp;&amp; dashAttackTimer == dashAttackCool){//check if able to dash attack
         instance_create(x+((sprite_width*1.5)*move), y, obj_hb_dash);//create the dash attack hitbox object
         dashAttackTimer = 0;//dash attack cool down reset
-        attackState = 1;//is attacking
+        attackState = attackStates.dash;//is attacking
         dashDir = move;//attack direction
         sprite_index = spr_player_dash;
     }
@@ -309,24 +318,39 @@ if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 
     
 }
 
+//If in the air and attacking, start aerial attack
+if(!onground &amp;&amp; !attackTrigger &amp;&amp; attack_pressed &amp;&amp; attackTimer == attackCool){
+    attackState = attackStates.aerial;
+    instance_create(x+((sprite_width*1.5)*facing), y, obj_hb_aerial);//create the aerial attack hitbox object
+    sprite_index = spr_player_aerial_attack;
+}
+
 switch(attackState){
-    case 1:  //Set hsp to dash attack speed if in attack, but before decceleration
+    case attackStates.dash:  //Set hsp to dash attack speed if in attack, but before decceleration
         hsp = dashDir*dashAttackSpeed; //direction and speed
         attackTrigger = true;
         sprite_index = spr_player_dash;
         break;
-    case 2:  //stop player if crouch attacking
+    case attackStates.crouch:  //stop player if crouch attacking
         hsp =0;
         attackTrigger = true;
         sprite_index = spr_player_crouch_attack;
         break;
+    case attackStates.aerial: //no change in speed if in air
+        attackTrigger = true;
+        sprite_index = spr_player_aerial_attack;
+        break;
 }
 
-if(dashAttackTimer &lt; dashAttackCool &amp;&amp; attackState != 1){//Decelerate from attack
+if(attackState == attackStates.none &amp;&amp; attackTimer &lt; attackCool){//wait a set amount of time before being able to attack again
+    attackTimer++;
+}
+
+if(dashAttackTimer &lt; dashAttackCool &amp;&amp; attackState != attackStates.dash){//Decelerate from attack
     dashAttackTimer++;
     hsp = dashDir*dashAttackSpeed*(dashAttackCool-dashAttackTimer)/dashAttackCool;
     attackTrigger = false;
-}else if(attackState == 0){
+}else if(attackState == attackStates.none){
     attackTrigger = false;
 }
 

@@ -5,7 +5,7 @@
   <visible>-1</visible>
   <depth>0</depth>
   <persistent>0</persistent>
-  <parentName>self</parentName>
+  <parentName>obj_player</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
@@ -27,7 +27,8 @@
             <kind>1</kind>
             <string>///Set existence timer and init position
 alarm[0] = room_speed * .1;
-
+lastX = obj_player.x;
+lastY = obj_player.y;
 
 </string>
           </argument>
@@ -52,8 +53,8 @@ alarm[0] = room_speed * .1;
           <argument>
             <kind>1</kind>
             <string>obj_player.attackState = 0;
+obj_player.sprite_index = spr_player;
 obj_player.attackTimer = 0;
-
 </string>
           </argument>
         </arguments>
@@ -71,6 +72,34 @@ obj_player.attackTimer = 0;
         <whoName>self</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
+      </action>
+    </event>
+    <event eventtype="3" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Follow player
+self.x += (obj_player.x - lastX);
+lastX = obj_player.x;
+self.y += (obj_player.y - lastY);
+lastY = obj_player.y;
+
+</string>
+          </argument>
+        </arguments>
       </action>
     </event>
   </events>
