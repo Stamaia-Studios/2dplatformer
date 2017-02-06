@@ -29,6 +29,9 @@
 //call the parent creation code and other single instance code
 event_inherited();
 max_speed=0;
+
+inv = true;
+
 </string>
           </argument>
         </arguments>

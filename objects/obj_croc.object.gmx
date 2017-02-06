@@ -34,6 +34,9 @@ max_interval = 60*3;//intervals of 3 seconds each from safe-unsafe
 interval = 0;//counter
 damage = true;
 oncroc = false;
+
+inv=true;
+
 </string>
           </argument>
         </arguments>

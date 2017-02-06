@@ -74,7 +74,7 @@ maxfallspeed=.3;
 }else{
 maxfallspeed=0;
 if(y&gt; obj_player.bbox_bottom)//will move up if the player jumps over
-vsp=-1;
+vsp=-.2;
 
 }
 
@@ -89,7 +89,7 @@ vsp=-1;
     y=spawn[1];
     }else{
     if(y&gt;spawn[1])//y+=-1;
-    vsp=-1;
+    vsp=-.2;
     }
     //vsp-=.7;//.5 is very slow up
     }else{

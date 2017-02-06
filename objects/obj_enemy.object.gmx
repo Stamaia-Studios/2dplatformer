@@ -34,10 +34,20 @@ max_speed = 1;//maximum horizontal speed
 max_jump = 4;//maximum jump height
 maxfallspeed = 8; // Max speed at which this can fall
 dir = -1;//left facing for default
-grav = 0.2;//gravity :p
+grav = 0.002;//gravity :p -- divided by 1000 the normal player amount for the number of frames per second for less than instant falling
 
 //more variables for one time only creation code
 onground = place_meeting(x, y+1, obj_wall);
+
+hp = 2; //2 hits per enemy to kill -- can be changed per enemy basis
+inv = false;//sets the enemey to be invincible or not -- changed per enemy basis
+inv_frame = 0;
+max_inv = 30;//only half a second of invincibility for enemies
+
+/*
+is_solid = false;//false allows the player to walk through
+damage = 1;//the amount of damage to cause to the player
+*/
 </string>
           </argument>
         </arguments>
@@ -99,6 +109,43 @@ if (place_meeting(x, y+vsp, obj_wall)) // Check if will hit floor/ceiling upon m
 }
 
 y += vsp; // Perform vertical movement
+
+
+//destroy this if it flies outside the room -- save CPU
+if((self.x&lt;-200)||(self.x&gt;room_width+200)||(self.y&gt;room_height+200||self.y&lt;-200)){
+    instance_destroy();
+    show_debug_message("REMOVED ENEMY FROM ROOM");
+}
+
+//if(inv)return 0;
+
+
+if(inv_frame&gt;0&amp;&amp;inv_frame%6&lt;3){//flickering effect
+    if(image_alpha&lt;1)
+    image_alpha=1;//100% opaque
+    else image_alpha=.2;//20% opaque
+    if(inv_frame-1&lt;1)image_alpha=1;//make sure the sprite is not stuck at .3/1 opacity
+}
+if(inv_frame&gt;0)inv--;
+/* DAMAGE TO THE ENEMY UNIMPLEMENTED
+if(inv_frame&lt;1)
+if(place_meeting(x+hsp, y, null)){
+hp--;
+inv_frame=max_inv;
+}
+*/
+
+if(!inv){//damage and kill enemy
+if(hp&lt;1)instance_destroy();//remove/kill the enmy when it's helth drops to zero or below
+}
+/*
+if(place_meeting(x,y,obj_player)){
+if(!is_solid)
+if(obj_player.inv&lt;1)//allow player to walk through
+obj_player.hp-=damage;
+else obj_player.hp-=damage;
+}
+*/
 </string>
           </argument>
         </arguments>

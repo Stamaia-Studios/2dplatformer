@@ -651,8 +651,9 @@
     <option_xbone_title_id></option_xbone_title_id>
   </Options>
   <ConfigConstants>
-    <constants number="1">
+    <constants number="2">
       <constant name="debug_graphics">true</constant>
+      <constant name="debug_console">true</constant>
     </constants>
   </ConfigConstants>
 </Config>

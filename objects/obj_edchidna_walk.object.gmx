@@ -42,6 +42,9 @@ rewalk = random(30);
 r_walk= rewalk;//counter for rewalking -- starts with ability to move
 walk=true;//handler for resetting counter
 */
+
+inv = true;
+
 </string>
           </argument>
         </arguments>
