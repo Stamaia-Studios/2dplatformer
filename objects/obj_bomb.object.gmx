@@ -29,13 +29,14 @@
 
 event_inherited();//use parent's variables and setup code
 
+//edit in creation code
 max_speed = .1;//the speed this moves
-
+counter = 60*3;//3 seconds until explosion
 view_distance = 220;//how far this will track the player
 
-dir_offset = abs(bbox_left-bbox_right);//when facing opposite direction
 
-counter = 60*3;//3 seconds until explosion
+//DO NOT EDIT IN CREATION CODE
+dir_offset = abs(bbox_left-bbox_right);//when facing opposite direction
 trigger = false;//will tell the counter to count down until zero
 explode = false;//this will be e
 xplode = 30;//half second explosion -- 0 is when this ends

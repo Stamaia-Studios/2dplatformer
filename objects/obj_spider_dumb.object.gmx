@@ -28,23 +28,23 @@
             <string>///Create Enemy Variables
 //call the parent creation code and other single instance code
 event_inherited();
+
+//edit in cration code
+max_wait=38;//max waiting frames after action
+maxfalldistance = 0; // anything above 0 will enable a max fall distance
+view_distance=40;
+
+
+//DO NOT EDIT IN CREATION CODE
+dir=0;//direction this is facing
+canfall = abs(obj_player.x-x)&lt;view_distance;//determines if it should go down or not on spawn
+climbing = false;//able to move back up or not
+spawn[0] = x;
+spawn[1] = y;
+wait=max_wait;//ca move upon spawning
 max_speed=0;//customised default variable
 hsp=0;//customized default variable
 maxfallspeed=0;
-
-spawn[0] = x;
-spawn[1] = y;
-
-dir=0;//direction this is facing
-
-view_width=40;
-maxfalldistance = 72; // 3 tiles or so
-canfall = abs(obj_player.x-x)&lt;view_width;//determines if it should go down or not on spawn
-climbing = false;//able to move back up or not
-
-max_wait=38;//max waiting frames after action
-wait=max_wait;//ca move upon spawning
-
 draw_enable_drawevent(true);//allow anything to be drawn
 
 </string>
@@ -84,7 +84,7 @@ if(!canfall&amp;&amp;!climbing)
 wait++;
 
 //determines if this should move
-if((wait&gt;=max_wait)&amp;&amp;abs(obj_player.x-x)&lt;view_width&amp;&amp;!canfall&amp;&amp;!climbing&amp;&amp;obj_player.y&gt;=spawn[1]){
+if((wait&gt;=max_wait)&amp;&amp;abs(obj_player.x-x)&lt;view_distance&amp;&amp;!canfall&amp;&amp;!climbing&amp;&amp;obj_player.y&gt;=spawn[1]){
 canfall=true;
 maxfallspeed=.3;
 wait=0;//resets counter to create wait times as predetermined
@@ -92,7 +92,7 @@ wait=0;//resets counter to create wait times as predetermined
 
 //check if this will go back up
 //changed to allow any distance before traveling back up
-if(!climbing&amp;&amp;canfall&amp;&amp;(place_meeting(x,y+1,obj_wall))){
+if(!climbing&amp;&amp;canfall&amp;&amp;(place_meeting(x,y+1,obj_wall))||(maxfalldistance&gt;0&amp;&amp;(canfall&amp;&amp;(abs(spawn[1]-y)&gt;=maxfalldistance)))){
 //go back up if limit has been reached or is hitting a wall (alt wall check needed)
 //if(canfall&amp;&amp;(abs(spawn[1]-y)&gt;=maxfalldistance)){
 climbing = true;
@@ -158,7 +158,7 @@ if(debug_graphics){
 
 draw_set_color(c_red);
 
-draw_rectangle(spawn[0]-abs(bbox_left-bbox_right)*2,spawn[1],spawn[0]+view_width,
+draw_rectangle(spawn[0]-abs(bbox_left-bbox_right)*2,spawn[1],spawn[0]+view_distance,
 spawn[1]+room_height,1);
 
 

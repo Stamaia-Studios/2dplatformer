@@ -29,15 +29,16 @@
 
 event_inherited();
 
-
+//edit in creation code
 max_speed=.2;
 max_jump = .5;//jump ability over time
-
-max_pause = 60;//maximum wait time for moving again
-pause = max_pause;//pause counter
-
-dist = abs(obj_player.x-(x/*+dir_offset/2*/));;
 view_distance = 250;
+max_wait = 60;//maximum wait time for moving again
+
+
+//DO NOT EDIT IN CREATION CODE
+pause = max_wait;//pause counter
+dist = abs(obj_player.x-(x/*+dir_offset/2*/));;
 dir_offset = abs(bbox_left-bbox_right);
 </string>
           </argument>
@@ -67,7 +68,7 @@ dist=abs(obj_player.x-(x/*+dir_offset/2*/));
 dir = sign(obj_player.x-(x/*+dir_offset/2*/));
 
 if(dist&lt;view_distance/2)//make sure the player is in its view range
-if(hsp==0&amp;&amp;pause&gt;=max_pause)
+if(hsp==0&amp;&amp;pause&gt;=max_wait)
 if(obj_player.bbox_top+abs(obj_player.bbox_top-obj_player.bbox_bottom)&gt;=
 y&amp;&amp;obj_player.bbox_top&lt;=bbox_bottom){//check if player is in vertically
 hsp=max_speed*dir;//set movement beyond zero

@@ -28,17 +28,18 @@
             <string>///Create Enemy Variables
 //call the parent creation code and other single instance code
 event_inherited();
+
+//edit in creation code
+view_distance=40;
+
+
+//DO NOT EDIT IN CREATION CODE
 max_speed=0;
 hsp=0;
 maxfallspeed=0;
-
 spawn[0] = x;
 spawn[1] = y;
-
 dir=0;
-
-view_width=40;//max view width to activate
-
 draw_enable_drawevent(true);//allow anything to be drawn
 
 </string>
@@ -68,7 +69,7 @@ draw_enable_drawevent(true);//allow anything to be drawn
 
 //only activate falling in this range
 //pretty much all the checks needed to not go too far or anything
-if(abs(obj_player.x-x)&lt;view_width&amp;&amp;obj_player.y&gt;=spawn[1]){
+if(abs(obj_player.x-x)&lt;view_distance&amp;&amp;obj_player.y&gt;=spawn[1]){
 if(y&lt; obj_player.bbox_bottom){
 maxfallspeed=.3;
 }else{
@@ -141,7 +142,7 @@ if(debug_graphics){
 
 draw_set_color(c_red);
 
-draw_rectangle(spawn[0]-abs(bbox_left-bbox_right)*2,spawn[1],spawn[0]+view_width,
+draw_rectangle(spawn[0]-abs(bbox_left-bbox_right)*2,spawn[1],spawn[0]+view_distance,
 spawn[1]+room_height,1);
 
 

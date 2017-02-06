@@ -28,10 +28,13 @@
             <string>///Create Enemy Variables
 //call the parent creation code and other single instance code
 event_inherited();
+
+//nothing to edit in creation code :p
+
+
+//DO NOT EDIT IN CREATION CODE
 max_speed=0;
-
 inv = true;
-
 </string>
           </argument>
         </arguments>

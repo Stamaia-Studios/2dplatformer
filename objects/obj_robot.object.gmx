@@ -30,9 +30,8 @@
 event_inherited();//use parent's variables and setup code
 
 max_speed = .05;//speed this moves
-dir=-1;//normal direction this travels
-
 view_distance = 90;//how far this will track the player
+
 
 dir_offset[0] = 0;//need to create this array 
 dir_offset[1] = 0;//to address viewing of player

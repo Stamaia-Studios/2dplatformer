@@ -114,6 +114,7 @@ y += vsp; // Perform vertical movement
 //destroy this if it flies outside the room -- save CPU
 if((self.x&lt;-200)||(self.x&gt;room_width+200)||(self.y&gt;room_height+200||self.y&lt;-200)){
     instance_destroy();
+    if(debug_console)
     show_debug_message("REMOVED ENEMY FROM ROOM");
 }
 

@@ -28,12 +28,18 @@
             <string>///Create Enemy Variables
 //call the parent creation code and other single instance code
 event_inherited();
-max_speed=.05;
 
+//edit in creation code
+max_speed=.05;
+max_distance = 20;
+
+
+//DO NOT EDIT IN CREATION CODE
 spawn[0] = x;
 spawn[1] = y;
+inv = true;
 
-max_distance = 20;
+
 
 /*Unhandled Options
 
@@ -42,9 +48,6 @@ rewalk = random(30);
 r_walk= rewalk;//counter for rewalking -- starts with ability to move
 walk=true;//handler for resetting counter
 */
-
-inv = true;
-
 </string>
           </argument>
         </arguments>

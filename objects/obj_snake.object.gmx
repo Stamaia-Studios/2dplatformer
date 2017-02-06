@@ -29,14 +29,16 @@
 
 event_inherited();
 
-max_speed = 0;
-hide=true;//sets if the snake can attack and or get damaged
+//edit in creation code
 view_distance = 200;//max distance this can see the player;
 hide_distance=70;//range in which this snake hides
-dist = 0;//distance variable for this to prevent constant reate/delete of variable
 rate_of_fire=.5;//60/X for projectiles per second, assuming 60FPS
-rate=60/rate_of_fire;//can shoot as soon as it sees you
 
+
+//DO NOT EDIT IN CREATION CODE
+max_speed = 0;
+hide=true;//sets if the snake can attack and or get damaged
+rate=60/rate_of_fire;//can shoot as soon as it sees you
 projectile_speed=1;
 </string>
           </argument>
