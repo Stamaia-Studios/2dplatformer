@@ -27,6 +27,18 @@
             <kind>1</kind>
             <string>///Create needed variables
 
+/*
+
+NOTE: THE ONL UNIVERSAL VARIABLES YOU SHOULD EDIT IN CREATION CODE ARE LISTED AS FOLLOWS
+    • dir // this should be -1,0,1 as it allows movement in that direction
+    • max_speed // this should always be positive and less than or equal to 1 (because enemies have many more frames than the player object)
+    
+    • OTHER VARIABLES ARE AT YOUR OWN RISK
+      - However, presetting hsp can create a 'cannon' effect if it were used in a cutscene
+      - so not everything is bad necessarily, but it may create uninteded consequences
+
+*/
+
 hsp=0;//horizontal move speed
 vsp=0;//vertical move speed
 
@@ -34,7 +46,7 @@ max_speed = 1;//maximum horizontal speed
 max_jump = 4;//maximum jump height
 maxfallspeed = 8; // Max speed at which this can fall
 dir = -1;//left facing for default
-grav = 0.002;//gravity :p -- divided by 1000 the normal player amount for the number of frames per second for less than instant falling
+grav = 0.002;//gravity -- divided by 1000 the normal player amount for the number of frames per second for less than instant falling
 
 //more variables for one time only creation code
 onground = place_meeting(x, y+1, obj_wall);
