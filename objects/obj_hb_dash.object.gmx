@@ -53,7 +53,6 @@ lastY = obj_player.y;
           <argument>
             <kind>1</kind>
             <string>obj_player.attackState = 0;
-obj_player.hsp -= obj_player.dashDir*15;
 </string>
           </argument>
         </arguments>

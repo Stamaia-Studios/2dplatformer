@@ -26,7 +26,6 @@
           <argument>
             <kind>1</kind>
             <string>/// Controls
-
 key_right = vk_right;
 key_left = vk_left;
 key_jump = ord('Z');
@@ -58,7 +57,9 @@ key_action = ord('C'); // pick_up and throw
             <string>/// Init Variables
 
 currState = state.normal;
+prevState = state.normal;
 onground = true;
+running = false;
 
 facing = 1; //last direction the player moved in
 grav = 0.2; // Gravity
@@ -132,13 +133,13 @@ last_dir=1;//last direction facing -- default is right
             <kind>1</kind>
             <string>///Run a Player State
 
-scr_input();
+prevState = currState;
 
+scr_input();
+scr_player_timers();
+
+gliding = false;
 onground = place_meeting(x, y+1, obj_wall); // True if player is on the ground
-crouchspeed = (basemovespeed * crouchmult) * movestatusmult; // Get current crouch speed
-runspeed = (basemovespeed * runmult) * movestatusmult; // Get current run speed
-movespeed = basemovespeed * movestatusmult; // Get current walk speed
-gliding = !onground &amp;&amp; sign(vsp) &amp;&amp; keyboard_check(key_jump); // Check if can glide
 
 switch (currState)
 {
@@ -146,12 +147,39 @@ switch (currState)
                         break;
     case state.dashing: scr_player_dashing();
                         break;
-    case state.platform: scr_player_platform();
+    case state.gliding: scr_player_gliding();
+                        break;
+    case state.running: scr_player_running();
+                        break;
+    case state.crouching: scr_player_crouching();
+                        break;
+    case state.jumping: scr_player_jumping();
                         break;
 }
 
-scr_player_add_movement();
+//Console display new state
+if currState != prevState
+{
+    switch (currState)
+    {
+        case state.normal:  show_debug_message("Normal");
+                            break;
+        case state.dashing: show_debug_message("Dashing");
+                            break;
+        case state.gliding: show_debug_message("Gliding");
+                            break;
+        case state.running: show_debug_message("Running");
+                            break;
+        case state.crouching: show_debug_message("Crouching");
+                            break;
+        case state.jumping: show_debug_message("Jumping");
+                            break;
+    }
+}
+
+scr_player_move_player();
 scr_player_action_event();
+scr_player_condition();
 </string>
           </argument>
         </arguments>

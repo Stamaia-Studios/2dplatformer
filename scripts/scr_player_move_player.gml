@@ -33,6 +33,7 @@ if (keyboard_check_released(key_jump) && !sign(vsp))
 {
     vsp /= 2;
 }
+
 // If gliding, slow vertical movement by the glide multiplier
 if (gliding && !(vsp <= maxfallspeed * glidemult))
 {
@@ -44,10 +45,9 @@ if (gliding && !(vsp <= maxfallspeed * glidemult))
     }
 }
 
-/*
 if (gliding && !(vsp <= maxfallspeed * glidemult))
     vsp = maxfallspeed * glidemult;
-*/
+
 
 vsp_final = vsp + vsp_carry;
 vsp_carry = 0;

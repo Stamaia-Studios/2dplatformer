@@ -25,44 +25,8 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// Music that is played
-musicToPlay     = "";
-
-// Is looping music
-loopMusic       = true; // Should the music be looping
-
-// Sound timers - determine when to loop, closeout of sound
-loopStart       = 0; // Seconds in music to start loop from
-loopEnd         = 0; // Seconds in music to stop and loop back from
-endStart        = 0; // Seconds in music to start the final loop from
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="3" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>other</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>if loopMusic
-{
-    scr_music_loop(); // Loop music
-}else{
-    scr_music_end(); // Set music to finish
-}
+            <string>dashTimerCooled = true;
+attackTimerCooled = true;
 </string>
           </argument>
         </arguments>
