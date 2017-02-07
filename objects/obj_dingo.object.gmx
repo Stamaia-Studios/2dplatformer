@@ -114,7 +114,7 @@ obj_player.hp--;
             <kind>1</kind>
             <string>///WHOOO More debug Graphics when there's so much on the screen already! -- Also have to draw the sprite
 
-draw_sprite(spr_dingo,0,x,y);
+draw_sprite_ext(spr_dingo,0,x+gph[1+dir],y,gph[4+dir],1,0,c_white,1);
 
 if(debug_graphics){
 draw_set_color(c_red);

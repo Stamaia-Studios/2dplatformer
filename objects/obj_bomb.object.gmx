@@ -127,7 +127,7 @@ explode=true;trigger=false;//insta explodes
 
 //make sure to actually draw the sprite :'V
 if(!explode)
-draw_sprite(spr_bomb,0,x,y);
+draw_sprite_ext(spr_bomb,0,x+gph[1+dir],y,gph[4+dir],1,0,c_white,1);
 else
 draw_sprite(spr_explosion,0,x,y);
 

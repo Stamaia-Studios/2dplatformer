@@ -56,6 +56,13 @@ inv = false;//sets the enemey to be invincible or not -- changed per enemy basis
 inv_frame = 0;
 max_inv = 30;//only half a second of invincibility for enemies
 
+gph[0] = 0;
+gph[1] = 0;
+gph[2] = 24;
+gph[3] = 1;
+gph[4] = 1;
+gph[5] = -1;
+
 /*
 is_solid = false;//false allows the player to walk through
 damage = 1;//the amount of damage to cause to the player

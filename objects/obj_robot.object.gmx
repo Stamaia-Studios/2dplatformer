@@ -106,7 +106,7 @@ obj_player.hp--;
             <string>///Graphics Neededing
 
 //make sure to actually draw the sprite :'V
-draw_sprite(spr_robot,0,x,y);
+draw_sprite_ext(spr_robot,0,x+gph[1+dir],y,gph[4+dir],1,0,c_white,1);
 
 if(debug_graphics){
 

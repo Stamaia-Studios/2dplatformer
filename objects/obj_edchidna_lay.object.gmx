@@ -70,6 +70,39 @@ obj_player.hp--;
         </arguments>
       </action>
     </event>
+    <event eventtype="8" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Debug and draw Actions here
+
+draw_sprite_ext(spr_echidna,0,x+gph[1+dir],y,gph[4+dir],1,0,c_white,1);
+
+if(debug_graphics){
+
+draw_set_color(c_red);
+
+draw_rectangle(x,y,x+abs(bbox_left-bbox_right),y+abs(bbox_top-bbox_bottom)*1.5,1);
+
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
   </events>
   <PhysicsObject>0</PhysicsObject>
   <PhysicsObjectSensor>0</PhysicsObjectSensor>
