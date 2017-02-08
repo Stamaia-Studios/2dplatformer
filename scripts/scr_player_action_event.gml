@@ -148,3 +148,6 @@ if (action_pressed)
     }
 }
 
+// pick up condition - set flag high if conditions met (idle, moving, running only)
+pick_up_ok = onground && (running || move || move == 0) && !down_pressed && !dashtrigger && !attackTrigger;
+pWall_pickup_chk = place_meeting(x, y+1, obj_pWall) | place_meeting(x, y-1, obj_pWall) | place_meeting(x+1, y, obj_pWall) | place_meeting(x-1, y, obj_pWall);

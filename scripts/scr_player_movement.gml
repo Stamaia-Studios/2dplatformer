@@ -16,6 +16,4 @@ else if (move < 0)
 // throw condition - set flag high if conditions are met (idle, moving, running, jumping only) !!!Moved to scr_player_normal
 //throw_ok = (has_throwable || has_boomerang) && (!onground || running || move || move == 0) && !down_pressed && !gliding && !dashtrigger && !attackTrigger;
 
-// pick up condition - set flag high if conditions met (idle, moving, running only)
-pick_up_ok = onground && (running || move || move == 0) && !down_pressed && !dashtrigger && !attackTrigger;
-pWall_pickup_chk = place_meeting(x, y+1, obj_pWall) | place_meeting(x, y-1, obj_pWall) | place_meeting(x+1, y, obj_pWall) | place_meeting(x-1, y, obj_pWall);
+
