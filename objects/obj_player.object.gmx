@@ -152,7 +152,7 @@ if !onground // If the player is not on the ground
     fallTimer = maxFallTimer; // Fall timer is reset
 }
 
-if fallTimer &lt; 0 // If the fall timer has been reached
+if fallTimer &lt;= 0 // If the fall timer has been reached
 {
     canJump = false // Remove players ability to jump
 }
@@ -310,8 +310,8 @@ else
 
 if (vsp &lt; maxfallspeed) vsp += grav; // Increase downward movement speed based on gravity
 
-if place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed{ // Checks that player is not trying to fall down platform
-if (onground &amp;&amp; !(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool &amp;&amp; jump_pressed && canJump)
+// Check that player is not trying to drop through a platform, not dashing, and can jump
+if (!(place_meeting(x, y+1, obj_platform) &amp;&amp; hsp == 0 &amp;&amp; down_pressed) &amp;&amp; dashAttackTimer == dashAttackCool &amp;&amp; jump_pressed &amp;&amp; canJump)
 {
     canJump = false;
     vsp = -jumpspeed;
@@ -645,8 +645,6 @@ if(inv&gt;0&amp;&amp;inv%6&lt;3){
 }
 //removes invincibility frames until none exist
 if(inv&gt;0)inv--;
-
-
 </string>
           </argument>
         </arguments>
