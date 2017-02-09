@@ -26,6 +26,9 @@
     <sprite>sprites\spr_rock</sprite>
     <sprite>sprites\spr_platform_move</sprite>
     <sprite>sprites\spr_pWall</sprite>
+    <sprite>sprites\health_border</sprite>
+    <sprite>sprites\item_border</sprite>
+    <sprite>sprites\spr_empty</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
@@ -47,6 +50,7 @@
     <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
     <object>objects\camera</object>
+    <object>objects\hud</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
