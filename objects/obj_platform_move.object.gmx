@@ -39,6 +39,8 @@ ispausing = true;                                   //Deactivates at each node?
 isstopped = true;                                   //When the platform is stopped
 pausetime = 80;                                     //Length of time to pause for. -1 indicates no unpausing
 currpausetime = pausetime;                          //Current timer
+pauseSpeed = 0;                                     //Holds speed during game pause
+gameWasPaused = false;                              //Saves previous pause state of game
 </string>
           </argument>
         </arguments>
@@ -62,6 +64,26 @@ currpausetime = pausetime;                          //Current timer
           <argument>
             <kind>1</kind>
             <string>//--Move platform along path--//
+// When the game is paused
+if global.pause 
+{
+    if !gameWasPaused // Pause speed has not been saved
+    {
+        gameWasPaused = !gameWasPaused; // Pause platform
+        pauseSpeed = speed; // Holds current speed at pause
+    }
+    speed = 0;
+    exit; // Quit function
+}
+
+// When the game has unpaused
+if !global.pause &amp;&amp; gameWasPaused
+{
+    gameWasPaused = !gameWasPaused; // Unpause platform
+    speed = pauseSpeed; // Set speed to what it was pre-paused
+    pauseSpeed = 0; // Unset pause speed
+}
+
 // Do not move the platform if the platform is not active
 if isactive {
     // Check if platform has reached the target - then make up the difference and place the platform directly on the current node

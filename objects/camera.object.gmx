@@ -64,6 +64,7 @@ leadDistY = 2;
           <argument>
             <kind>1</kind>
             <string>///Camera Follow
+if global.pause {exit;} // Do not do anything when game is paused
 if(instance_exists(obj_player)){
     xV = view_xview[0]+(view_wview[0]/2);
     yV = view_yview[0]+(view_hview[0]/2);

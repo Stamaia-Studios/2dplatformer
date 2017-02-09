@@ -66,7 +66,8 @@ basemovespeed = 6;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// collison pre-check
+            <string>if global.pause {exit;} // Do not do anything when game is paused
+// collison pre-check
 hitWall = place_meeting(x+hsp_init, y, obj_wall) | place_meeting(x-hsp_init, y, obj_wall) | place_meeting(x, y, obj_wall) | place_meeting(x, y+sign(vsp), obj_wall); // True if rock is hitting wall
 onGround = place_meeting(x, y+1, obj_wall); 
 
