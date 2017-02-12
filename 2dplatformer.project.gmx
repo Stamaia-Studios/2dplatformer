@@ -4,7 +4,10 @@
     <Config>Configs\Default</Config>
   </Configs>
   <NewExtensions/>
-  <sounds name="sound"/>
+  <sounds name="sound">
+    <sound>sound\snd_BossTheme_16Bit_Test</sound>
+    <sound>sound\snd_BossTheme_8Bit_Test</sound>
+  </sounds>
   <sprites name="sprites">
     <sprite>sprites\spr_player_crouching</sprite>
     <sprite>sprites\spr_player_crouch_attack</sprite>
@@ -29,6 +32,23 @@
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <script>scripts\scr_input.gml</script>
+    <script>scripts\scr_music_loop.gml</script>
+    <script>scripts\scr_music_end.gml</script>
+    <script>scripts\scr_music_play.gml</script>
+    <script>scripts\scr_player_move_player.gml</script>
+    <script>scripts\scr_player_action_event.gml</script>
+    <script>scripts\scr_player_movement.gml</script>
+    <script>scripts\scr_player_condition.gml</script>
+    <script>scripts\scr_player_timers.gml</script>
+    <script>scripts\scr_player_normal.gml</script>
+    <script>scripts\scr_player_dashing.gml</script>
+    <script>scripts\scr_player_gliding.gml</script>
+    <script>scripts\scr_player_running.gml</script>
+    <script>scripts\scr_player_crouching.gml</script>
+    <script>scripts\scr_player_jumping.gml</script>
+  </scripts>
   <objects name="objects">
     <object>objects\obj_player</object>
     <object>objects\obj_wall</object>
@@ -47,6 +67,7 @@
     <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
     <object>objects\camera</object>
+    <object>objects\obj_music_player</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
