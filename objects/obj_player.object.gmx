@@ -91,6 +91,9 @@ fallthrough = false;
 attackTrigger = false;
 facingDir = 1;
 apexFallTrigger = -4; // fall speed reqiured to recieve additional gravity
+maxFallTimer = 10; // Amount of steps before player can no longer jump while falling
+fallTimer = maxFallTimer; // Current steps before player can no longer jump while falling
+canJump = true; // Decides if the player can jump - Used to prevent double jumping
 
 chrH = 16; // half height of player in pixels
 chrW = 16; // half width of player in pixels
@@ -131,7 +134,6 @@ last_dir=1;//last direction facing -- default is right
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///Run a Player State
 
 prevState = currState;
 
@@ -160,6 +162,7 @@ switch (currState)
 //Console display new state
 if currState != prevState
 {
+
     switch (currState)
     {
         case state.normal:  show_debug_message("Normal");
