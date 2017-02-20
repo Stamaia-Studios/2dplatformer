@@ -29,6 +29,14 @@
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <script>scripts\scr_game_start.gml</script>
+    <script>scripts\scr_game_exit.gml</script>
+    <script>scripts\scr_game_over.gml</script>
+  </scripts>
+  <fonts name="fonts">
+    <font>fonts\fnt_menu</font>
+  </fonts>
   <objects name="objects">
     <object>objects\obj_player</object>
     <object>objects\obj_wall</object>
@@ -47,8 +55,10 @@
     <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
     <object>objects\camera</object>
+    <object>objects\obj_menu</object>
   </objects>
   <rooms name="rooms">
+    <room>rooms\rom_main_menu</room>
     <room>rooms\room0</room>
   </rooms>
   <help>
