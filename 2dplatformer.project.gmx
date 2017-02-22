@@ -26,9 +26,14 @@
     <sprite>sprites\spr_rock</sprite>
     <sprite>sprites\spr_platform_move</sprite>
     <sprite>sprites\spr_pWall</sprite>
+    <sprite>sprites\spr_checkpoint</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <script>scripts\scr_game_save.gml</script>
+    <script>scripts\scr_game_load.gml</script>
+  </scripts>
   <objects name="objects">
     <object>objects\obj_player</object>
     <object>objects\obj_wall</object>
@@ -47,8 +52,10 @@
     <object>objects\obj_platform_move</object>
     <object>objects\obj_pWall</object>
     <object>objects\camera</object>
+    <object>objects\obj_checkpoint</object>
   </objects>
   <rooms name="rooms">
+    <room>rooms\rom_initialise</room>
     <room>rooms\room0</room>
   </rooms>
   <help>
