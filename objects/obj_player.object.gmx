@@ -72,6 +72,7 @@ movestatusmult = 1; // For buffs/debuffs
 glidemult = 0.25; // Glide speed mutlplier
 jumpboost = 0.5; // Horizontal boost on jump
 runjumpboost = 1; // Horizontal boost on runjump
+running = false;
 dash_left_timer = 0;
 dash_right_timer = 0;
 dash_timeout = 15;
@@ -132,7 +133,6 @@ last_dir=1;//last direction facing -- default is right
           <argument>
             <kind>1</kind>
             <string>///Movement and Collision
-
 // Get Inputs
 right_pressed = keyboard_check(key_right);
 left_pressed = keyboard_check(key_left);
